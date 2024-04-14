@@ -2,11 +2,10 @@ import os
 
 from flask import Flask, send_from_directory
 
-from src.services.user_service import UserService
+from src.services import user_service
 
 app = Flask(__name__)
 
-userService = UserService()
 
 if __name__ == '__main__':
     app.run(debug=True)
