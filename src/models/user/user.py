@@ -1,9 +1,13 @@
-from flask_sqlalchemy import SQLAlchemy
+from typing import List, Dict, Any
 
-from .user_schema import UserInputSchema
+from flask_sqlalchemy import SQLAlchemy
+from jsonschema._keywords import items
+
+from .user_schema import UserInputSchema, UserListSchema, UserInputPasswordSchema
 
 # Crear la instancia de SQLAlchemy
 db = SQLAlchemy()
+
 
 # Definir la clase User
 class User(db.Model):
@@ -56,7 +60,8 @@ class User(db.Model):
         return new_user
 
     @classmethod
-    def modify_user(cls, name: str, last_names: str, email: str, password: str, security_word: str) -> 'UserInputSchema':
+    def modify_user(cls, name: str, last_names: str, email: str, password: str,
+                    security_word: str) -> 'UserInputSchema':
         """
         Modify an existing user
         :param security_word:
@@ -64,7 +69,6 @@ class User(db.Model):
         :param email:
         :param last_names:
         :param name:
-        :param user_changed:
         :return: The updated user
         """
 
@@ -90,10 +94,85 @@ class User(db.Model):
         """
         Modify an existing user
         :param user_id:
-        :return: The updated user
+        :return: The searched user
         """
 
         try:
             return db.session.query(User).filter_by(id=user_id).first()
+        except Exception:
+            raise Exception("No se encontró ningún usuario con ese id.")
+
+    @classmethod
+    def get_user_by_email(cls, user_email: email) -> 'User':
+        """
+        Modify an existing user
+        :param user_email:
+        :return: The searched user
+        """
+
+        try:
+            return db.session.query(User).filter_by(email=user_email).first()
+        except Exception:
+            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+
+    @classmethod
+    def delete_user_by_id(cls, user_id: int) -> None:
+        """
+        Modify an existing user
+        :param user_id:
+        :return: The searched user
+        """
+
+        try:
+            user = db.session.query(User).filter_by(id=user_id).first()
+            db.session.delete(user)
+        except Exception:
+            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+
+    @classmethod
+    def delete_user_by_email(cls, user_email: email):
+        """
+        Modify an existing user
+        :param user_email:
+        :return: The searched user
+        """
+
+        try:
+            user = db.session.query(User).filter_by(email=user_email).first()
+            db.session.delete(user)
+        except Exception:
+            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+
+    @classmethod
+    def get_all_users(cls) -> list[dict[str, Any]]:
+        try:
+            users = db.session.query(User).all()
+
+            serialized_users = []
+            for user in users:
+                serialized_user = {
+                    'name': user.name,
+                    'last_names': user.last_names,
+                    'email': user.email,
+                    'password': user.password,
+                    'security_word': user.security_word
+                }
+                serialized_users.append(serialized_user)
+
+            return serialized_users
+        except Exception:
+            raise Exception("No existen usuarios.")
+
+    @classmethod
+    def change_user_password(cls, email: str, new_password: str):
+        try:
+            user = db.session.query(User).filter_by(email=email).first()
+            print(user)
+            user.password = new_password
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                raise e
         except Exception:
             raise Exception("No se encontró ningún usuario con ese correo electrónico.")
