@@ -86,9 +86,9 @@ def get_user_by_email(user_email: str):
         return {'message': str(e)}
 
 
-@blp.route('/<string:user_email>', methods=['GET'])
+@blp.route('/<string:user_id>', methods=['DELETE'])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200, UserInputSchema)
+@blp.response(200)
 def delete_user_by_id(user_id: int):
     """
     Delete a user by his id
@@ -101,7 +101,7 @@ def delete_user_by_id(user_id: int):
 
 @blp.route('/<string:user_email>', methods=['DELETE'])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200, UserInputSchema)
+@blp.response(200)
 def delete_user_by_email(user_email: str):
     """
     Delete a user by his email
