@@ -133,7 +133,7 @@ def get_all_users():
 @blp.response(200)
 def change_user_password(data):
     """
-    Get all the users
+    Change an user password
     """
     try:
         return User.change_user_password(data.get('email'), data.get('new_password'))
