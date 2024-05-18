@@ -1,9 +1,9 @@
-from typing import List, Dict, Any
+from typing import Any
 
 from flask_sqlalchemy import SQLAlchemy
-from jsonschema._keywords import items
 
-from .user_schema import UserInputSchema, UserListSchema, UserInputPasswordSchema
+from .user_schema import UserInputSchema
+from ...exceptions import UserEmailException, UserIdException
 
 # Crear la instancia de SQLAlchemy
 db = SQLAlchemy()
@@ -18,6 +18,8 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(200))
     security_word = db.Column(db.String(50))
+    matches = db.Column(db.Integer)
+    wins = db.Column(db.Integer)
 
     def __init__(self, name, last_names, email, password, security_word):
         self.name = name
@@ -72,13 +74,17 @@ class User(db.Model):
         :return: The updated user
         """
 
-        user = db.session.query(User).filter_by(email=email).first()
+        try:
+            user = db.session.query(User).filter_by(email=email).first()
 
-        if user:
-            user.name = name
-            user.last_names = last_names
-            user.password = password
-            user.security_word = security_word
+            if name:
+                user.name = name
+            if last_names:
+                user.last_names = last_names
+            if name:
+                user.password = password
+            if last_names:
+                user.security_word = security_word
 
             try:
                 db.session.commit()
@@ -86,8 +92,8 @@ class User(db.Model):
             except Exception as e:
                 db.session.rollback()
                 raise e
-        else:
-            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+        except Exception:
+            raise UserEmailException()
 
     @classmethod
     def get_user_by_id(cls, user_id: int) -> 'User':
@@ -100,7 +106,7 @@ class User(db.Model):
         try:
             return db.session.query(User).filter_by(id=user_id).first()
         except Exception:
-            raise Exception("No se encontró ningún usuario con ese id.")
+            raise UserIdException()
 
     @classmethod
     def get_user_by_email(cls, user_email: email) -> 'User':
@@ -113,7 +119,7 @@ class User(db.Model):
         try:
             return db.session.query(User).filter_by(email=user_email).first()
         except Exception:
-            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+            raise UserEmailException()
 
     @classmethod
     def delete_user_by_id(cls, user_id: int) -> None:
@@ -127,7 +133,7 @@ class User(db.Model):
             user = db.session.query(User).filter_by(id=user_id).first()
             db.session.delete(user)
         except Exception:
-            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+            raise UserEmailException()
 
     @classmethod
     def delete_user_by_email(cls, user_email: email):
@@ -141,7 +147,7 @@ class User(db.Model):
             user = db.session.query(User).filter_by(email=user_email).first()
             db.session.delete(user)
         except Exception:
-            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+            raise UserEmailException()
 
     @classmethod
     def get_all_users(cls) -> list[dict[str, Any]]:
@@ -167,7 +173,6 @@ class User(db.Model):
     def change_user_password(cls, email: str, new_password: str):
         try:
             user = db.session.query(User).filter_by(email=email).first()
-            print(user)
             user.password = new_password
             try:
                 db.session.commit()
@@ -175,4 +180,35 @@ class User(db.Model):
                 db.session.rollback()
                 raise e
         except Exception:
-            raise Exception("No se encontró ningún usuario con ese correo electrónico.")
+            raise UserEmailException()
+
+    @classmethod
+    def add_new_win(cls, email: str):
+        try:
+            user = db.session.query(User).filter_by(email=email).first()
+            user.matches += 1
+            user.wins += 1
+
+            try:
+                db.session.commit()
+                return {'matches': user.matches, 'wins': user.wins}
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        except Exception:
+            raise UserEmailException()
+
+    @classmethod
+    def add_new_match(cls, email: str):
+        try:
+            user = db.session.query(User).filter_by(email=email).first()
+            user.matches += 1
+
+            try:
+                db.session.commit()
+                return {'matches': user.matches}
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        except Exception:
+            raise UserEmailException()

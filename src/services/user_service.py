@@ -1,6 +1,16 @@
 import flask
+from flask import jsonify
 from flask_smorest import Blueprint
-from src.models.user import User, UserInputSchema, UserListSchema, UserInputPasswordSchema
+
+from src.exceptions import UserEmailException
+from src.models.user import (
+    User,
+    UserInputSchema,
+    UserListSchema,
+    UserInputPasswordSchema,
+    ModifyUserInputSchema,
+    UserInputMatchSchema, UserMatchesSchema, UserWinsSchema
+)
 
 api_url = '/user'
 api_name = 'User'
@@ -37,9 +47,9 @@ def create_user(data):
         return {'message': str(e)}
 
 
-@blp.route('/modify-user', methods=['POST'])
+@blp.route('/modify-user', methods=['PATCH'])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputSchema, location='query')
+@blp.arguments(ModifyUserInputSchema, location='query')
 @blp.response(200, UserInputSchema)
 def modify_user(data):
     """
@@ -54,8 +64,10 @@ def modify_user(data):
             data.get('security_word')
         )
         return new_user
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/<int:user_id>', methods=['GET'])
@@ -68,8 +80,10 @@ def get_user_by_id(user_id: int):
     try:
         new_user = User.get_user_by_id(user_id)
         return new_user
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/<string:user_email>', methods=['GET'])
@@ -82,8 +96,10 @@ def get_user_by_email(user_email: str):
     try:
         new_user = User.get_user_by_email(user_email)
         return new_user
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/<string:user_id>', methods=['DELETE'])
@@ -95,8 +111,10 @@ def delete_user_by_id(user_id: int):
     """
     try:
         User.delete_user_by_id(user_id)
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/<string:user_email>', methods=['DELETE'])
@@ -108,8 +126,10 @@ def delete_user_by_email(user_email: str):
     """
     try:
         User.delete_user_by_email(user_email)
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/user_list', methods=['GET'])
@@ -137,6 +157,40 @@ def change_user_password(data):
     """
     try:
         return User.change_user_password(data.get('email'), data.get('new_password'))
-    except Exception as e:
-        return {'message': str(e)}
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route('/win', methods=['PUT'])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(UserInputMatchSchema, location='query')
+@blp.response(200, UserWinsSchema)
+def add_new_win(data):
+    """
+    Add a new win to the user
+    """
+    try:
+        return User.add_new_win(data.get('email'))
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route('/match', methods=['PUT'])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(UserInputMatchSchema, location='query')
+@blp.response(200, UserMatchesSchema)
+def add_new_match(data):
+    """
+    Add a new match to the user
+    """
+    try:
+        return User.add_new_match(data.get('email'))
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
