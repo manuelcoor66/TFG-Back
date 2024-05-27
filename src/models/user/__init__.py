@@ -1,6 +1,7 @@
 from .user import User, db
 
 from .user_schema import (
+    CreateUserInputSchema,
     UserInputSchema,
     UserListSchema,
     UserInputPasswordSchema,
@@ -12,6 +13,7 @@ from .user_schema import (
 __all__ = [
     'db',
     'User',
+    'CreateUserInputSchema',
     'UserInputSchema',
     'UserListSchema',
     'UserInputPasswordSchema',

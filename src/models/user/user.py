@@ -21,12 +21,14 @@ class User(db.Model):
     matches = db.Column(db.Integer)
     wins = db.Column(db.Integer)
 
-    def __init__(self, name, last_names, email, password, security_word):
+    def __init__(self, name, last_names, email, password, security_word, matches, wins):
         self.name = name
         self.last_names = last_names
         self.email = email
         self.password = password
         self.security_word = security_word
+        self.matches = matches
+        self.wins = wins
 
     def __repr__(self) -> str:
         """
@@ -51,7 +53,9 @@ class User(db.Model):
             last_names=last_names,
             email=email,
             password=password,
-            security_word=security_word
+            security_word=security_word,
+            matches=0,
+            wins=0
         )
         # Agregar el nuevo usuario a la sesión
         db.session.add(new_user)
@@ -157,6 +161,7 @@ class User(db.Model):
             serialized_users = []
             for user in users:
                 serialized_user = {
+                    'id': user.id,
                     'name': user.name,
                     'last_names': user.last_names,
                     'email': user.email,

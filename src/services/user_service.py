@@ -5,6 +5,7 @@ from flask_smorest import Blueprint
 from src.exceptions import UserEmailException
 from src.models.user import (
     User,
+    CreateUserInputSchema,
     UserInputSchema,
     UserListSchema,
     UserInputPasswordSchema,
@@ -28,7 +29,7 @@ blp = Blueprint(
 
 @blp.route('/create-user', methods=['POST'])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputSchema, location='query')
+@blp.arguments(CreateUserInputSchema, location='query')
 @blp.response(200, UserInputSchema)
 def create_user(data):
     """
