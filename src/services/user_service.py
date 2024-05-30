@@ -2,7 +2,7 @@ import flask
 from flask import jsonify
 from flask_smorest import Blueprint
 
-from src.exceptions import UserEmailException
+from src.exceptions import UserEmailException, UserExistsException, UserIdException
 from src.models.user import (
     User,
     CreateUserInputSchema,
@@ -10,7 +10,9 @@ from src.models.user import (
     UserListSchema,
     UserInputPasswordSchema,
     ModifyUserInputSchema,
-    UserInputMatchSchema, UserMatchesSchema, UserWinsSchema
+    UserInputMatchSchema,
+    UserMatchesSchema,
+    UserWinsSchema
 )
 
 api_url = '/user'
@@ -44,8 +46,10 @@ def create_user(data):
             data.get('security_word')
         )
         return new_user
-    except Exception as e:
-        return {'message': str(e)}
+    except UserExistsException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route('/modify-user', methods=['PATCH'])
@@ -81,7 +85,7 @@ def get_user_by_id(user_id: int):
     try:
         new_user = User.get_user_by_id(user_id)
         return new_user
-    except UserEmailException as e:
+    except UserIdException as e:
         response = jsonify({'message': str(e)})
         response.status_code = 422
         return response

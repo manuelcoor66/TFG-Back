@@ -3,7 +3,7 @@ from typing import Any
 from flask_sqlalchemy import SQLAlchemy
 
 from .user_schema import UserInputSchema
-from ...exceptions import UserEmailException, UserIdException
+from ...exceptions import UserEmailException, UserIdException, UserExistsException
 
 # Crear la instancia de SQLAlchemy
 db = SQLAlchemy()
@@ -37,6 +37,34 @@ class User(db.Model):
         return f'<User {self.name} ({self.email})>'
 
     @classmethod
+    def get_user_by_email(cls, user_email: email) -> 'User':
+        """
+        Modify an existing user
+        :param user_email:
+        :return: The searched user
+        """
+        user = db.session.query(User).filter_by(email=user_email).first()
+
+        if user:
+            return user
+        else:
+            raise UserEmailException()
+
+    @classmethod
+    def get_user_by_id(cls, user_id: int) -> 'User':
+        """
+        Modify an existing user
+        :param user_id:
+        :return: The searched user
+        """
+        user = db.session.query(User).filter_by(id=user_id).first()
+
+        if user:
+            return user
+        else:
+            raise UserIdException()
+
+    @classmethod
     def create_user(cls, name: str, last_names: str, email: str, password: str, security_word: str) -> 'User':
         """
         Create a new user
@@ -47,23 +75,32 @@ class User(db.Model):
         :param security_word:
         :return: The new user
         """
-        # Crear un nuevo objeto de usuario
-        new_user = User(
-            name=name,
-            last_names=last_names,
-            email=email,
-            password=password,
-            security_word=security_word,
-            matches=0,
-            wins=0
-        )
-        # Agregar el nuevo usuario a la sesión
-        db.session.add(new_user)
-        # Confirmar los cambios en la base de datos
-        db.session.commit()
+        user = db.session.query(User).filter_by(email=email).first()
 
-        # Retornar el usuario recién creado
-        return new_user
+        if user is None:
+            # Crear un nuevo objeto de usuario
+            new_user = User(
+                name=name,
+                last_names=last_names,
+                email=email,
+                password=password,
+                security_word=security_word,
+                matches=0,
+                wins=0
+            )
+            try:
+                # Agregar el nuevo usuario a la sesión
+                db.session.add(new_user)
+                # Confirmar los cambios en la base de datos
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                raise e
+
+            # Retornar el usuario recién creado
+            return new_user
+        else:
+            raise UserExistsException()
 
     @classmethod
     def modify_user(cls, name: str, last_names: str, email: str, password: str,
@@ -77,10 +114,9 @@ class User(db.Model):
         :param name:
         :return: The updated user
         """
+        user = cls.get_user_by_email(email)
 
-        try:
-            user = db.session.query(User).filter_by(email=email).first()
-
+        if user is not None:
             if name:
                 user.name = name
             if last_names:
@@ -96,33 +132,7 @@ class User(db.Model):
             except Exception as e:
                 db.session.rollback()
                 raise e
-        except Exception:
-            raise UserEmailException()
-
-    @classmethod
-    def get_user_by_id(cls, user_id: int) -> 'User':
-        """
-        Modify an existing user
-        :param user_id:
-        :return: The searched user
-        """
-
-        try:
-            return db.session.query(User).filter_by(id=user_id).first()
-        except Exception:
-            raise UserIdException()
-
-    @classmethod
-    def get_user_by_email(cls, user_email: email) -> 'User':
-        """
-        Modify an existing user
-        :param user_email:
-        :return: The searched user
-        """
-
-        try:
-            return db.session.query(User).filter_by(email=user_email).first()
-        except Exception:
+        else:
             raise UserEmailException()
 
     @classmethod
@@ -132,12 +142,17 @@ class User(db.Model):
         :param user_id:
         :return: The searched user
         """
+        user = cls.get_user_by_id(user_id)
 
-        try:
-            user = db.session.query(User).filter_by(id=user_id).first()
-            db.session.delete(user)
-        except Exception:
-            raise UserEmailException()
+        if user:
+            try:
+                db.session.delete(user)
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        else:
+            raise UserIdException()
+
 
     @classmethod
     def delete_user_by_email(cls, user_email: email):
@@ -146,18 +161,22 @@ class User(db.Model):
         :param user_email:
         :return: The searched user
         """
+        user = cls.get_user_by_email(user_email)
 
-        try:
-            user = db.session.query(User).filter_by(email=user_email).first()
-            db.session.delete(user)
-        except Exception:
+        if user:
+            try:
+                db.session.delete(user)
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        else:
             raise UserEmailException()
 
     @classmethod
     def get_all_users(cls) -> list[dict[str, Any]]:
-        try:
-            users = db.session.query(User).all()
+        users = db.session.query(User).all()
 
+        if users:
             serialized_users = []
             for user in users:
                 serialized_user = {
@@ -171,13 +190,13 @@ class User(db.Model):
                 serialized_users.append(serialized_user)
 
             return serialized_users
-        except Exception:
+        else:
             raise Exception("No existen usuarios.")
 
     @classmethod
     def change_user_password(cls, email: str, new_password: str):
         try:
-            user = db.session.query(User).filter_by(email=email).first()
+            user = cls.get_user_by_email(email)
             user.password = new_password
             try:
                 db.session.commit()
@@ -189,8 +208,8 @@ class User(db.Model):
 
     @classmethod
     def add_new_win(cls, email: str):
-        try:
-            user = db.session.query(User).filter_by(email=email).first()
+        user = cls.get_user_by_email(email)
+        if user:
             user.matches += 1
             user.wins += 1
 
@@ -200,13 +219,14 @@ class User(db.Model):
             except Exception as e:
                 db.session.rollback()
                 raise e
-        except Exception:
+        else:
             raise UserEmailException()
 
     @classmethod
     def add_new_match(cls, email: str):
-        try:
-            user = db.session.query(User).filter_by(email=email).first()
+        user = cls.get_user_by_email(email)
+
+        if user:
             user.matches += 1
 
             try:
@@ -215,5 +235,5 @@ class User(db.Model):
             except Exception as e:
                 db.session.rollback()
                 raise e
-        except Exception:
+        else:
             raise UserEmailException()
