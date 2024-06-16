@@ -36,6 +36,11 @@ class UserInputPasswordSchema(Schema):
     new_password = fields.Str(required=True)
 
 
+class UserInputSecurityWordSchema(Schema):
+    email = fields.Email(required=True)
+    security_word = fields.Str(required=True)
+
+
 class UserInputMatchSchema(Schema):
     email = fields.Email(required=True)
 

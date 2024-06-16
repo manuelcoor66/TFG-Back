@@ -8,7 +8,8 @@ from .user_schema import (
     ModifyUserInputSchema,
     UserInputMatchSchema,
     UserMatchesSchema,
-    UserWinsSchema
+    UserWinsSchema,
+    UserInputSecurityWordSchema,
 )
 __all__ = [
     'db',
@@ -20,5 +21,6 @@ __all__ = [
     'ModifyUserInputSchema',
     'UserInputMatchSchema',
     'UserMatchesSchema',
-    'UserWinsSchema'
+    'UserWinsSchema',
+    'UserInputSecurityWordSchema'
 ]

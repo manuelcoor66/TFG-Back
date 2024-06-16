@@ -207,6 +207,20 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
+    def change_user_security_word(cls, email: str, security_word: str):
+        print(security_word)
+        try:
+            user = cls.get_user_by_email(email)
+            user.security_word = security_word
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        except Exception:
+            raise UserEmailException()
+
+    @classmethod
     def add_new_win(cls, email: str):
         user = cls.get_user_by_email(email)
         if user:

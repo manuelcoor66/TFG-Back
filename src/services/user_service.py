@@ -12,7 +12,8 @@ from src.models.user import (
     ModifyUserInputSchema,
     UserInputMatchSchema,
     UserMatchesSchema,
-    UserWinsSchema
+    UserWinsSchema,
+    UserInputSecurityWordSchema
 )
 
 api_url = '/user'
@@ -91,7 +92,7 @@ def get_user_by_id(user_id: int):
         return response
 
 
-@blp.route('/<string:user_email>', methods=['GET'])
+@blp.route('/email/<string:user_email>', methods=['GET'])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, UserInputSchema)
 def get_user_by_email(user_email: str):
@@ -162,6 +163,22 @@ def change_user_password(data):
     """
     try:
         return User.change_user_password(data.get('email'), data.get('new_password'))
+    except UserEmailException as e:
+        response = jsonify({'message': str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route('/change-security-word', methods=['PATCH'])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(UserInputSecurityWordSchema, location='query')
+@blp.response(200)
+def change_user_security_word(data):
+    """
+    Change an user security word
+    """
+    try:
+        return User.change_user_security_word(data.get('email'), data.get('security_word'))
     except UserEmailException as e:
         response = jsonify({'message': str(e)})
         response.status_code = 422
