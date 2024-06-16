@@ -3,7 +3,7 @@ from typing import Any
 from flask_sqlalchemy import SQLAlchemy
 
 from .user_schema import UserInputSchema
-from ...exceptions import UserEmailException, UserIdException, UserExistsException
+from .user_exception import UserEmailException, UserIdException, UserExistsException
 
 # Crear la instancia de SQLAlchemy
 db = SQLAlchemy()

@@ -2,7 +2,6 @@ import flask
 from flask import jsonify
 from flask_smorest import Blueprint
 
-from src.exceptions import UserEmailException, UserExistsException, UserIdException
 from src.models.user import (
     User,
     CreateUserInputSchema,
@@ -14,6 +13,12 @@ from src.models.user import (
     UserMatchesSchema,
     UserWinsSchema,
     UserInputSecurityWordSchema
+)
+
+from src.models.user.user_exception import (
+    UserEmailException,
+    UserExistsException,
+    UserIdException
 )
 
 api_url = '/user'
