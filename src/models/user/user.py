@@ -104,7 +104,7 @@ class User(db.Model):
 
     @classmethod
     def modify_user(cls, name: str, last_names: str, email: str, password: str,
-                    security_word: str) -> 'UserInputSchema':
+                    security_word: str) -> 'User':
         """
         Modify an existing user
         :param security_word:
@@ -125,6 +125,7 @@ class User(db.Model):
                 user.password = password
             if last_names:
                 user.security_word = security_word
+                print('aaaaaaaaaaaaaaa')
 
             try:
                 db.session.commit()

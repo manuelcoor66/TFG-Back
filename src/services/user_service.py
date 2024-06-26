@@ -75,7 +75,7 @@ def modify_user(data):
             data.get('security_word')
         )
         return new_user
-    except UserEmailException as e:
+    except (UserEmailException, Exception) as e:
         response = jsonify({'message': str(e)})
         response.status_code = 422
         return response
