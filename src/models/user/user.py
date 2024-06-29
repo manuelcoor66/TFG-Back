@@ -1,13 +1,8 @@
 from typing import Any
 
-from flask_sqlalchemy import SQLAlchemy
-
-from .user_schema import UserInputSchema
 from .user_exception import UserEmailException, UserIdException, UserExistsException
 
-# Crear la instancia de SQLAlchemy
-db = SQLAlchemy()
-
+from src.models import db
 
 # Definir la clase User
 class User(db.Model):
@@ -39,7 +34,7 @@ class User(db.Model):
     @classmethod
     def get_user_by_email(cls, user_email: email) -> 'User':
         """
-        Modify an existing user
+        Get an existing user
         :param user_email:
         :return: The searched user
         """
@@ -53,7 +48,7 @@ class User(db.Model):
     @classmethod
     def get_user_by_id(cls, user_id: int) -> 'User':
         """
-        Modify an existing user
+        Get an existing user
         :param user_id:
         :return: The searched user
         """
@@ -125,7 +120,6 @@ class User(db.Model):
                 user.password = password
             if last_names:
                 user.security_word = security_word
-                print('aaaaaaaaaaaaaaa')
 
             try:
                 db.session.commit()
@@ -141,13 +135,13 @@ class User(db.Model):
         """
         Modify an existing user
         :param user_id:
-        :return: The searched user
         """
         user = cls.get_user_by_id(user_id)
 
         if user:
             try:
                 db.session.delete(user)
+                db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 raise e
@@ -167,6 +161,7 @@ class User(db.Model):
         if user:
             try:
                 db.session.delete(user)
+                db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 raise e
