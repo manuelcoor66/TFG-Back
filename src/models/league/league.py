@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Any
 
 from src.models.league.league_exceptions import LeagueExistsException, LeagueIdException, LeagueNameException
@@ -75,8 +76,15 @@ class League(db.Model):
                     'id': league.id,
                     'name': league.name,
                     'description': league.description,
-                    'created_by': league.created_by
+                    'created_by': league.created_by,
+                    'enrolments': league.enrolments,
+                    'points_victory': league.points_victory,
+                    'points_defeat': league.points_defeat,
+                    'weeks': league.weeks,
+                    'weeks_played': league.weeks_played,
+                    'date_start': league.date_start
                 }
+
                 serialized_leagues.append(serialized_league)
 
             return serialized_leagues
@@ -84,12 +92,16 @@ class League(db.Model):
             raise Exception("No existen usuarios.")
 
     @classmethod
-    def create_league(cls, name: str, description: str, created_by: int) -> 'League':
+    def create_league(cls, name: str, description: str, created_by: int, points_victory: int, points_defeat: int, weeks: int, date_start: date) -> 'League':
         """
         Create a new league
         :param name:
         :param description:
         :param created_by:
+        :param points_victory:
+        :param points_defeat:
+        :param weeks:
+        :param date_start:
         :return: The new league
         """
         league = db.session.query(League).filter_by(name=name).first()
@@ -99,7 +111,12 @@ class League(db.Model):
                 name=name,
                 description=description,
                 created_by=created_by,
-                enrolments=0
+                enrolments=0,
+                points_victory=points_victory,
+                points_defeat=points_defeat,
+                weeks=weeks,
+                weeks_played=0,
+                date_start=date_start
             )
             try:
                 db.session.add(new_league)
@@ -150,7 +167,7 @@ class League(db.Model):
             raise LeagueIdException
 
     @classmethod
-    def modify_league(cls, id: int, name: str, description: str) -> 'League':
+    def modify_league(cls, id: int, name: str, description: str, points_victory: int, points_defeat: int, weeks: int, date_start: date) -> 'League':
         """
         Modify an existing league
         :param id:
@@ -159,13 +176,18 @@ class League(db.Model):
         :return: The updated league
         """
         league = cls.get_league_by_id(id)
-        league_name = cls.get_league_by_name(name)
+        # league_name = cls.get_league_by_name(name)
 
         if league is not None:
-            if league_name is not None and league:
-                league.name = name
+            league.name = name
             if description:
                 league.description = description
+
+            if league.date_start is not None and league.date_start > date.today():
+                league.date_start = date_start
+                league.points_victory = points_victory
+                league.points_defeat = points_defeat
+                league.weeks = weeks
 
             try:
                 db.session.commit()

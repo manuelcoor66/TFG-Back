@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.add_column('league', sa.Column('id', sa.Integer, primary_key=True))
-    op.alter_column('league', 'name', existing_type=sa.String(100), unique=True)
+    op.add_column('league', sa.Column('name', sa.String(100), nullable=False))
     op.add_column('league', sa.Column('description', sa.String(100)))
     op.add_column('league', sa.Column('created_by', sa.Integer))
     op.add_column('league', sa.Column('enrolments', sa.Integer))
@@ -33,7 +33,7 @@ def upgrade() -> None:
 
 def downgrade():
     op.drop_column('league', 'id')
-    op.alter_column('league', 'name', existing_type=sa.String(100), nullable=False)
+    op.drop_column('league', 'name')
     op.drop_column('league', 'description')
     op.drop_column('league', 'created_by')
     op.drop_column('league', 'enrolments')

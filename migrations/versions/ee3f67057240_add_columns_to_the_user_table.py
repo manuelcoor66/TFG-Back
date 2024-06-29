@@ -27,6 +27,7 @@ def upgrade():
     op.add_column('user', sa.Column('matches', sa.Integer))
     op.add_column('user', sa.Column('wins', sa.Integer))
 
+
 def downgrade():
     op.drop_column('user', 'name')
     op.drop_column('user', 'last_names')

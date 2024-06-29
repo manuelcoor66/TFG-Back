@@ -83,7 +83,11 @@ def create_user(data):
         new_user = League.create_league(
             data.get('name'),
             data.get('description'),
-            data.get('created_by')
+            data.get('created_by'),
+            data.get('points_victory'),
+            data.get('points_defeat'),
+            data.get('weeks'),
+            data.get('date_start'),
         )
         return new_user
     except LeagueExistsException as e:
@@ -134,7 +138,11 @@ def modify_user(data):
         new_user = League.modify_league(
             data.get('id'),
             data.get('name'),
-            data.get('description')
+            data.get('description'),
+            data.get('points_victory'),
+            data.get('points_defeat'),
+            data.get('weeks'),
+            data.get('date_start'),
         )
         return new_user
     except (LeagueIdException, Exception) as e:

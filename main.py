@@ -25,8 +25,8 @@ db.init_app(app)
 api = Api(app)
 
 # Registrar el Blueprint del servicio de usuario
-api.register_blueprint(league_service.blp)
 api.register_blueprint(user_service.blp)
+api.register_blueprint(league_service.blp)
 
 if __name__ == "__main__":
     app.run(debug=True)
