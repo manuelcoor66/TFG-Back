@@ -37,3 +37,7 @@ class ModifyLeagueInputSchema(Schema):
     points_defeat = fields.Int(required=True)
     weeks = fields.Int(required=True)
     date_start = fields.Date(required=True)
+
+
+class LeagueIdSchema(Schema):
+    id = fields.Integer(required=True)
