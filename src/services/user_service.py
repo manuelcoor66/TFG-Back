@@ -113,7 +113,7 @@ def get_user_by_email(user_email: str):
         return response
 
 
-@blp.route('/<string:user_id>', methods=['DELETE'])
+@blp.route('/<int:user_id>', methods=['DELETE'])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_user_by_id(user_id: int):
