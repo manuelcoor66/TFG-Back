@@ -62,7 +62,7 @@ def get_league_by_name(league_name: str):
         return response
 
 
-@blp.route("/league_list", methods=["GET"])
+@blp.route("/league-list", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, LeagueListSchema)
 def get_all_leagues():
