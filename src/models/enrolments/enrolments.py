@@ -60,26 +60,22 @@ class Enrolment(db.Model):
         """
         enrolments = db.session.query(Enrolment).filter_by(user_id=user_id).all()
 
-        if enrolments:
-            serialized_enrolments = []
-            for enrolment in enrolments:
-                serialized_enrolment = {
-                    "id": enrolment.id,
-                    "user_id": enrolment.user_id,
-                    "league_id": enrolment.league_id,
-                    "points": enrolment.points,
-                    "matches_played": enrolment.matches_played,
-                    "paid": enrolment.paid,
-                    "active": enrolment.active,
-                    "finalized": enrolment.finalized,
-                }
+        serialized_enrolments = []
+        for enrolment in enrolments:
+            serialized_enrolment = {
+                "id": enrolment.id,
+                "user_id": enrolment.user_id,
+                "league_id": enrolment.league_id,
+                "points": enrolment.points,
+                "matches_played": enrolment.matches_played,
+                "paid": enrolment.paid,
+                "active": enrolment.active,
+                "finalized": enrolment.finalized,
+            }
 
-                serialized_enrolments.append(serialized_enrolment)
+            serialized_enrolments.append(serialized_enrolment)
 
-            return serialized_enrolments
-        else:
-            raise EnrolmentUserIdException
-
+        return serialized_enrolments
     @classmethod
     def get_enrolments_by_league_id(cls, league_id: int) -> list[dict[str, Any]]:
         """
@@ -148,6 +144,7 @@ class Enrolment(db.Model):
         try:
             db.session.add(new_enrolment)
             db.session.commit()
+            return new_enrolment
         except Exception as e:
             db.session.rollback()
             raise e
@@ -165,17 +162,37 @@ class Enrolment(db.Model):
 
             if league:
                 enrolment.matches_played += 1
-                print(enrolment.matches_played)
                 if win is True:
                     enrolment.points += league.points_victory
                 else:
                     enrolment.points += league.points_defeat
                 try:
                     db.session.commit()
+                    return cls.get_all_enrolments()
                 except Exception as e:
                     db.session.rollback()
                     raise e
             else:
                 raise LeagueIdException
+        else:
+            raise EnrolmentException
+
+    @classmethod
+    def finalize_enrolment(cls, user_id: int, league_id: int):
+        enrolment = (
+            db.session.query(Enrolment)
+            .filter_by(league_id=league_id, user_id=user_id)
+            .first()
+        )
+
+        if enrolment:
+            enrolment.finalized = True
+            try:
+                db.session.delete(enrolment)
+                db.session.commit()
+                return cls.get_enrolments_by_user_id(user_id)
+            except Exception as e:
+                db.session.rollback()
+                raise e
         else:
             raise EnrolmentException

@@ -8,6 +8,7 @@ from src.models.league.league_exceptions import (
 )
 
 from src.models import db
+from src.models.user import User
 
 
 class League(db.Model):
@@ -61,6 +62,10 @@ class League(db.Model):
         league = db.session.query(League).filter_by(id=league_id).first()
 
         if league:
+            user = User.get_user_by_id(league.created_by)
+            league.created_by_id = league.created_by
+            league.created_by = user.name + ' ' + user.last_names
+
             return league
         else:
             raise LeagueIdException
@@ -75,6 +80,10 @@ class League(db.Model):
         league = db.session.query(League).filter_by(name=league_name).first()
 
         if league:
+            user = User.get_user_by_id(league.created_by)
+            league.created_by_id = league.created_by
+            league.created_by = user.name + ' ' + user.last_names
+
             return league
         else:
             raise LeagueNameException
@@ -86,11 +95,14 @@ class League(db.Model):
         if leagues:
             serialized_leagues = []
             for league in leagues:
+                user = User.get_user_by_id(league.created_by)
+
                 serialized_league = {
                     "id": league.id,
                     "name": league.name,
                     "description": league.description,
-                    "created_by": league.created_by,
+                    "created_by": user.name + ' ' + user.last_names,
+                    "created_by_id": league.created_by,
                     "enrolments": league.enrolments,
                     "points_victory": league.points_victory,
                     "points_defeat": league.points_defeat,

@@ -5,6 +5,7 @@ from .enrolments_schema import (
     EnrolmentListSchema,
     CreateEnrolmentSchema,
     AddMatchSchema,
+    EnrolmentSchema
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "EnrolmentListSchema",
     "CreateEnrolmentSchema",
     "AddMatchSchema",
+    "EnrolmentSchema"
 ]

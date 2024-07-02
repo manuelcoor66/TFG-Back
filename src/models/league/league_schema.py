@@ -1,11 +1,12 @@
 from marshmallow import Schema, fields
 
 
-class LeagueInputSchema(Schema):
+class LeagueResponse(Schema):
     id = fields.Integer(required=True)
     name = fields.Str(required=True)
     description = fields.Str(required=True)
-    created_by = fields.Integer(required=True)
+    created_by = fields.Str(required=True)
+    created_by_id = fields.Integer(required=True)
     enrolments = fields.Integer(required=True)
     points_victory = fields.Int(required=True)
     points_defeat = fields.Int(required=True)
@@ -15,7 +16,7 @@ class LeagueInputSchema(Schema):
 
 
 class LeagueListSchema(Schema):
-    items = fields.List(fields.Nested(LeagueInputSchema))
+    items = fields.List(fields.Nested(LeagueResponse))
     total = fields.Int(required=True)
 
 
@@ -29,7 +30,7 @@ class CreateLeagueSchema(Schema):
     date_start = fields.Date(required=True)
 
 
-class ModifyLeagueInputSchema(Schema):
+class ModifyLeagueResponse(Schema):
     id = fields.Integer(required=True)
     name = fields.Str(required=True)
     description = fields.Str(required=True)

@@ -4,10 +4,10 @@ from flask_smorest import Blueprint
 
 from src.models.league import (
     League,
-    LeagueInputSchema,
+    LeagueResponse,
     LeagueListSchema,
     CreateLeagueSchema,
-    ModifyLeagueInputSchema,
+    ModifyLeagueResponse,
     LeagueIdSchema,
 )
 from src.models.league.league_exceptions import (
@@ -32,7 +32,7 @@ blp = Blueprint(
 
 @blp.route("/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200, LeagueInputSchema)
+@blp.response(200, LeagueResponse)
 def get_league_by_id(league_id: int):
     """
     Get a league by his id
@@ -48,7 +48,7 @@ def get_league_by_id(league_id: int):
 
 @blp.route("/name/<string:league_name>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200, LeagueInputSchema)
+@blp.response(200, LeagueResponse)
 def get_league_by_name(league_name: str):
     """
     Get a league by his name
@@ -80,7 +80,7 @@ def get_all_leagues():
 @blp.route("/create-league", methods=["POST"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(CreateLeagueSchema, location="query")
-@blp.response(200, LeagueInputSchema)
+@blp.response(200, LeagueResponse)
 def create_league(data):
     """
     Create a new league
@@ -102,7 +102,7 @@ def create_league(data):
         return response
 
 
-@blp.route("/<int:league_id>", methods=["DELETE"])
+@blp.route("/id/<int:league_id>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_league_by_id(league_id: int):
@@ -117,7 +117,7 @@ def delete_league_by_id(league_id: int):
         return response
 
 
-@blp.route("/<string:league_name>", methods=["DELETE"])
+@blp.route("/name/<string:league_name>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_league_by_name(league_name: str):
@@ -134,8 +134,8 @@ def delete_league_by_name(league_name: str):
 
 @blp.route("/modify-league", methods=["PATCH"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(ModifyLeagueInputSchema, location="query")
-@blp.response(200, LeagueInputSchema)
+@blp.arguments(ModifyLeagueResponse, location="query")
+@blp.response(200, LeagueResponse)
 def modify_league(data):
     """
     Modify an existing user

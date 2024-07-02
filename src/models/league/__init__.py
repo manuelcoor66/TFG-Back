@@ -1,19 +1,19 @@
 from .league import League, db
 
 from .league_schema import (
-    LeagueInputSchema,
+    LeagueResponse,
     LeagueListSchema,
     CreateLeagueSchema,
-    ModifyLeagueInputSchema,
+    ModifyLeagueResponse,
     LeagueIdSchema,
 )
 
 __all__ = [
     "db",
     "League",
-    "LeagueInputSchema",
+    "LeagueResponse",
     "LeagueListSchema",
     "CreateLeagueSchema",
-    "ModifyLeagueInputSchema",
+    "ModifyLeagueResponse",
     "LeagueIdSchema",
 ]

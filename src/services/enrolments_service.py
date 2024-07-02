@@ -7,6 +7,7 @@ from src.models.enrolments import (
     EnrolmentInputSchema,
     CreateEnrolmentSchema,
     AddMatchSchema,
+    EnrolmentSchema,
 )
 from src.models.enrolments.enrolments import Enrolment
 from src.models.enrolments.enrolments_exceptions import (
@@ -35,7 +36,7 @@ blp = Blueprint(
 @blp.route("/<int:enrolment_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, EnrolmentInputSchema)
-def get_league_by_enrolment_id(enrolment_id: int):
+def get_enrolment_by_id(enrolment_id: int):
     """
     Get an enrolment by his id
     """
@@ -51,13 +52,12 @@ def get_league_by_enrolment_id(enrolment_id: int):
 @blp.route("/user/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, EnrolmentListSchema)
-def get_league_by_user_id(user_id: int):
+def get_enrolment_by_user_id(user_id: int):
     """
     Get an user enrolments by his id
     """
     try:
         enrolments = Enrolment.get_enrolments_by_user_id(user_id)
-        print(enrolments)
 
         return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentUserIdException as e:
@@ -69,7 +69,7 @@ def get_league_by_user_id(user_id: int):
 @blp.route("/league/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, EnrolmentListSchema)
-def get_league_by_id(league_id: int):
+def get_enrolment_by_league_id(league_id: int):
     """
     Get a league enrolments by his id
     """
@@ -92,7 +92,6 @@ def get_all_enrolments():
     """
     try:
         enrolments = Enrolment.get_all_enrolments()
-        print({"items": enrolments, "total": len(enrolments)})
 
         return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentsException as e:
@@ -123,16 +122,36 @@ def create_enrolment(data):
 @blp.route("/add_match", methods=["POST"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(AddMatchSchema, location="query")
-@blp.response(200)
+@blp.response(200, EnrolmentListSchema)
 def add_match(data):
     """
     Add a new match to an enrolment
     """
     try:
-        Enrolment.add_new_match(
+        enrolments = Enrolment.add_new_match(
             data.get("user_id"), data.get("league_id"), data.get("win")
         )
+
+        return {"items": enrolments, "total": len(enrolments)}
     except (LeagueIdException, EnrolmentException, Exception) as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/finalize_enrolment", methods=["PUT"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(EnrolmentSchema, location="query")
+@blp.response(200, EnrolmentListSchema)
+def finalize_enrolment(data):
+    """
+    Finalize an enrolment
+    """
+    try:
+        enrolments = Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
+
+        return {"items": enrolments, "total": len(enrolments)}
+    except EnrolmentException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
         return response

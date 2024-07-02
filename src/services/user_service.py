@@ -81,7 +81,7 @@ def modify_user(data):
         return response
 
 
-@blp.route("/<int:user_id>", methods=["GET"])
+@blp.route("/id/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, UserInputSchema)
 def get_user_by_id(user_id: int):
@@ -89,8 +89,8 @@ def get_user_by_id(user_id: int):
     Get a user by his id
     """
     try:
-        new_user = User.get_user_by_id(user_id)
-        return new_user
+        user = User.get_user_by_id(user_id)
+        return user
     except UserIdException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
@@ -113,7 +113,7 @@ def get_user_by_email(user_email: str):
         return response
 
 
-@blp.route("/<string:user_id>", methods=["DELETE"])
+@blp.route("/<int:user_id>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_user_by_id(user_id: int):

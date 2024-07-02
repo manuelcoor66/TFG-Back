@@ -27,3 +27,8 @@ class AddMatchSchema(Schema):
     user_id = fields.Integer(required=True)
     league_id = fields.Integer(required=True)
     win = fields.Boolean(required=True)
+
+
+class EnrolmentSchema(Schema):
+    user_id = fields.Integer(required=True)
+    league_id = fields.Integer(required=True)
