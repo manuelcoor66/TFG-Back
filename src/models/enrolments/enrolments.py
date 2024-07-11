@@ -1,5 +1,7 @@
 from typing import Any
 
+from sqlalchemy import desc
+
 from src.models import db
 from src.models.enrolments.enrolments_exceptions import (
     EnrolmentIdException,
@@ -11,6 +13,8 @@ from src.models.enrolments.enrolments_exceptions import (
 from src.models.league import League
 from src.models.league.league_exceptions import LeagueIdException
 
+from src.models.user import User
+
 
 class Enrolment(db.Model):
     __tablename__ = "enrolments"
@@ -19,12 +23,14 @@ class Enrolment(db.Model):
     league_id = db.Column(db.Integer, db.ForeignKey("league.id"))
     points = db.Column(db.Integer)
     matches_played = db.Column(db.Integer)
+    wins = db.Column(db.Integer)
+    defeats = db.Column(db.Integer)
     paid = db.Column(db.Boolean)
     active = db.Column(db.Boolean)
     finalized = db.Column(db.Boolean)
 
     def __init__(
-        self, user_id, league_id, points, matches_played, paid, active, finalized
+        self, user_id, league_id, points, matches_played, paid, active, finalized, wins, defeats
     ):
         self.user_id = user_id
         self.league_id = league_id
@@ -33,6 +39,8 @@ class Enrolment(db.Model):
         self.paid = paid
         self.active = active
         self.finalized = finalized
+        self.wins = wins
+        self.defeats = defeats
 
     def __repr__(self):
         return f"<Enrolment(id={self.id}, user_id={self.user_id}, league_id={self.league_id}"
@@ -58,7 +66,7 @@ class Enrolment(db.Model):
         :param user_id:
         :return:
         """
-        enrolments = db.session.query(Enrolment).filter_by(user_id=user_id).all()
+        enrolments = db.session.query(Enrolment).filter_by(user_id=user_id).order_by(desc(Enrolment.points)).all()
 
         serialized_enrolments = []
         for enrolment in enrolments:
@@ -71,11 +79,14 @@ class Enrolment(db.Model):
                 "paid": enrolment.paid,
                 "active": enrolment.active,
                 "finalized": enrolment.finalized,
+                "wins": enrolment.wins,
+                "defeats": enrolment.defeats
             }
 
             serialized_enrolments.append(serialized_enrolment)
 
         return serialized_enrolments
+
     @classmethod
     def get_enrolments_by_league_id(cls, league_id: int) -> list[dict[str, Any]]:
         """
@@ -83,7 +94,7 @@ class Enrolment(db.Model):
         :param league_id:
         :return:
         """
-        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id).all()
+        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id).order_by(desc(Enrolment.points)).all()
 
         if enrolments:
             serialized_enrolments = []
@@ -97,6 +108,8 @@ class Enrolment(db.Model):
                     "paid": enrolment.paid,
                     "active": enrolment.active,
                     "finalized": enrolment.finalized,
+                    "wins": enrolment.wins,
+                    "defeats": enrolment.defeats
                 }
 
                 serialized_enrolments.append(serialized_enrolment)
@@ -107,7 +120,7 @@ class Enrolment(db.Model):
 
     @classmethod
     def get_all_enrolments(cls) -> list[dict[str, Any]]:
-        enrolments = db.session.query(Enrolment).all()
+        enrolments = db.session.query(Enrolment).order_by(desc(Enrolment.points)).all()
 
         if enrolments:
             serialized_enrolments = []
@@ -121,6 +134,8 @@ class Enrolment(db.Model):
                     "paid": enrolment.paid,
                     "active": enrolment.active,
                     "finalized": enrolment.finalized,
+                    "wins": enrolment.wins,
+                    "defeats": enrolment.defeats
                 }
 
                 serialized_enrolments.append(serialized_enrolment)
@@ -164,8 +179,10 @@ class Enrolment(db.Model):
                 enrolment.matches_played += 1
                 if win is True:
                     enrolment.points += league.points_victory
+                    enrolment.wins += 1
                 else:
                     enrolment.points += league.points_defeat
+                    enrolment.defeats += 1
                 try:
                     db.session.commit()
                     return cls.get_all_enrolments()
@@ -196,3 +213,33 @@ class Enrolment(db.Model):
                 raise e
         else:
             raise EnrolmentException
+
+    @classmethod
+    def get_enrolments_table_by_league_id(cls, league_id: int) -> list[dict[str, Any]]:
+        """
+        Return an existing enrolment
+        :param league_id:
+        :return:
+        """
+        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id).order_by(desc(Enrolment.points)).all()
+
+        if enrolments:
+            serialized_enrolments = []
+            id = 1
+            for enrolment in enrolments:
+                user = User.get_user_by_id(enrolment.user_id)
+
+                serialized_enrolment = {
+                    "id": id,
+                    "name": user.name,
+                    "points": enrolment.points,
+                    "wins": enrolment.wins,
+                    "defeats": enrolment.defeats
+                }
+
+                serialized_enrolments.append(serialized_enrolment)
+                id += 1
+
+            return serialized_enrolments
+        else:
+            raise EnrolmentLeagueIdException

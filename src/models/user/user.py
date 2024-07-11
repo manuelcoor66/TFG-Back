@@ -207,7 +207,6 @@ class User(db.Model):
 
     @classmethod
     def change_user_security_word(cls, email: str, security_word: str):
-        print(security_word)
         try:
             user = cls.get_user_by_email(email)
             user.security_word = security_word

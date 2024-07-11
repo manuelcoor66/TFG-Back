@@ -2,7 +2,7 @@ from flask import Flask
 from flask_smorest import Api
 from flask_cors import CORS
 from src.models.user import db
-from src.services import user_service, league_service, enrolments_service
+from src.services import user_service, league_service, enrolments_service, matches_service
 
 # Crear la aplicación Flask
 app = Flask(__name__)
@@ -30,6 +30,6 @@ api = Api(app)
 api.register_blueprint(user_service.blp)
 api.register_blueprint(league_service.blp)
 api.register_blueprint(enrolments_service.blp)
-
+api.register_blueprint(matches_service.blp)
 if __name__ == "__main__":
     app.run(debug=True)

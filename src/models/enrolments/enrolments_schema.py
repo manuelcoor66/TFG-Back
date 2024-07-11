@@ -7,6 +7,8 @@ class EnrolmentInputSchema(Schema):
     league_id = fields.Integer(required=True)
     points = fields.Float(required=True)
     matches_played = fields.Integer(required=True)
+    wins = fields.Integer(required=True)
+    defeats = fields.Integer(required=True)
     paid = fields.Boolean(required=True)
     active = fields.Boolean(required=True)
     finalized = fields.Boolean(required=True)
@@ -32,3 +34,16 @@ class AddMatchSchema(Schema):
 class EnrolmentSchema(Schema):
     user_id = fields.Integer(required=True)
     league_id = fields.Integer(required=True)
+
+
+class EnrolmentsLeagueTableSchema(Schema):
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+    points = fields.Float(required=True)
+    wins = fields.Integer(required=True)
+    defeats = fields.Integer(required=True)
+
+
+class EnrolmentsLeagueTableListSchema(Schema):
+    items = fields.List(fields.Nested(EnrolmentsLeagueTableSchema))
+    total = fields.Int(required=True)

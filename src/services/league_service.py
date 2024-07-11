@@ -162,6 +162,11 @@ def modify_league(data):
 @blp.arguments(LeagueIdSchema, location="query")
 @blp.response(200)
 def finalize_league(data):
+    """
+    Finalize an existing league
+    :param data:
+    :return:
+    """
     try:
         League.finalize_league(data.get("id"))
     except (LeagueIdException, Exception) as e:

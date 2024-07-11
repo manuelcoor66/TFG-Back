@@ -8,6 +8,7 @@ from src.models.enrolments import (
     CreateEnrolmentSchema,
     AddMatchSchema,
     EnrolmentSchema,
+    EnrolmentsLeagueTableListSchema,
 )
 from src.models.enrolments.enrolments import Enrolment
 from src.models.enrolments.enrolments_exceptions import (
@@ -152,6 +153,23 @@ def finalize_enrolment(data):
 
         return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentException as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/table/<int:league_id>", methods=["GET"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.response(200, EnrolmentsLeagueTableListSchema)
+def get_enrolment_by_league_id(league_id: int):
+    """
+    Get a league enrolments by his id to show
+    """
+    try:
+        enrolments = Enrolment.get_enrolments_table_by_league_id(league_id)
+
+        return {"items": enrolments, "total": len(enrolments)}
+    except EnrolmentLeagueIdException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
