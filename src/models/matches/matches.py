@@ -1,9 +1,10 @@
 import datetime
 
-from sqlalchemy import or_
+from sqlalchemy import or_, Date, and_
 from typing import Any
 
 from src.models import db
+from src.models.matches.matches_exception import UserWithMatch
 from src.models.user import User
 
 
@@ -32,7 +33,7 @@ class Matches(db.Model):
         self.place = place
 
     def __repr__(self):
-        return f"<Match(id={self.id}, league_id={self.league_id}, result='{self.result}'"
+        return f"<Match(id={self.id}, league_id={self.league_id}, result='{self.result}')"
 
     @classmethod
     def get_matches_list_by_league_id(cls, league_id: int) -> list[dict[str, Any]]:
@@ -200,3 +201,105 @@ class Matches(db.Model):
             return serialized_matches
         else:
             raise Exception("No existen partidos.")
+
+    @classmethod
+    def create_league(cls, league_id: int, player_id_1: int, date: Date, place: int):
+        matches = db.session.query(Matches).filter(league_id == league_id,
+            or_(
+                Matches.player_id_1 == player_id_1,
+                Matches.player_id_2 == player_id_1,
+                Matches.player_id_3 == player_id_1,
+                Matches.player_id_4 == player_id_1
+            ),
+            Matches.date > datetime.datetime.now()
+        ).all()
+        if not matches:
+            new_match = Matches(
+                league_id=league_id,
+                result='',
+                player_id_1=player_id_1,
+                player_id_2=0,
+                player_id_3=0,
+                player_id_4=0,
+                date=date,
+                place=place,
+            )
+            try:
+                db.session.add(new_match)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                raise e
+
+            return new_match
+        else:
+            raise UserWithMatch
+
+
+    @classmethod
+    def add_new_player(cls, match_id: int, player_id: int):
+        match = db.session.query(Matches).filter(
+            Matches.date > datetime.datetime.now(),
+            Matches.id == match_id,
+            and_(
+                Matches.player_id_1 != player_id,
+                Matches.player_id_2 != player_id,
+                Matches.player_id_3 != player_id,
+                Matches.player_id_4 != player_id,
+                or_(
+                    Matches.player_id_1 == 0,
+                    Matches.player_id_2 == 0,
+                    Matches.player_id_3 == 0,
+                    Matches.player_id_4 == 0
+                )
+            )
+        ).first()
+
+        if match:
+            if match.player_id_1 == 0:
+                match.player_id_1 = player_id
+            elif match.player_id_2 == 0:
+                match.player_id_2 = player_id
+            elif match.player_id_3 == 0:
+                match.player_id_3 = player_id
+            else:
+                match.player_id_4 = player_id
+
+            try:
+                db.session.commit()
+
+                return match
+            except Exception as e:
+                db.session.rollback()
+                raise e
+
+        else:
+            raise Exception("No existen partidos.")
+
+
+    @classmethod
+    def add_result(cls, match_id: int, result: str):
+        match = db.session.query(Matches).filter(
+            Matches.date < datetime.datetime.now(),
+            Matches.id == match_id,
+            and_(
+                Matches.player_id_1 != 0,
+                Matches.player_id_2 != 0,
+                Matches.player_id_3 != 0,
+                Matches.player_id_4 != 0
+            )
+        ).first()
+
+        if match:
+            match.result = result
+
+            try:
+                db.session.commit()
+
+                return match
+            except Exception as e:
+                db.session.rollback()
+                raise e
+
+        else:
+            raise Exception("No existe el partidos.")

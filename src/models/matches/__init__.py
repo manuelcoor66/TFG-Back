@@ -1,11 +1,21 @@
 from .matches import Matches, db
 
 from .matches_schema import (
-    MatchesListSchema
+    MatchesListSchema,
+    MatchResponse,
+    CreateMatchSchema,
+    AddNewPlayerSchema,
+    MatchAddResponse,
+    AddResultSchema
 )
 
 __all__ = [
     "db",
     "Matches",
-    "MatchesListSchema"
+    "MatchesListSchema",
+    "MatchResponse",
+    "CreateMatchSchema",
+    "AddNewPlayerSchema",
+    "MatchAddResponse",
+    "AddResultSchema"
 ]

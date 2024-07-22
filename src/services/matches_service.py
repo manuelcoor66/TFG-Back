@@ -4,10 +4,13 @@ from flask_smorest import Blueprint
 
 from src.models.matches import (
     Matches,
-    MatchesListSchema
+    MatchesListSchema,
+    MatchResponse,
+    CreateMatchSchema,
+    AddNewPlayerSchema,
+    MatchAddResponse,
+    AddResultSchema
 )
-
-
 
 api_url = "/matches"
 api_name = "Matches"
@@ -94,5 +97,59 @@ def get_matches_by_league_id(league_id: int):
         matches = Matches.get_active_league_matches(league_id)
 
         return {"items": matches, "total": len(matches)}
+    except Exception as e:
+        return {"message": str(e)}
+
+
+@blp.route("/create", methods=["POST"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(CreateMatchSchema, location="query")
+@blp.response(200, MatchResponse)
+def create_league(data):
+    """
+    Create a new match
+    """
+    try:
+        new_match = Matches.create_league(
+            data.get("league_id"),
+            data.get("player_name_1"),
+            data.get("date"),
+            data.get("place")
+        )
+
+        return new_match
+    except Exception as e:
+        return {"message": str(e)}
+
+
+@blp.route("/add-player", methods=["POST"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(AddNewPlayerSchema, location="query")
+@blp.response(200, MatchAddResponse)
+def create_league(data):
+    """
+    Add new player to a match
+    """
+    try:
+        match = Matches.add_new_player(data.get('match_id'), data.get('player_id'),)
+
+        return match
+    except Exception as e:
+        return {"message": str(e)}
+
+
+
+@blp.route("/add-result", methods=["POST"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(AddResultSchema, location="query")
+@blp.response(200, MatchAddResponse)
+def create_league(data):
+    """
+    Add a result to a match
+    """
+    try:
+        match = Matches.add_result(data.get('match_id'), data.get('result'),)
+
+        return match
     except Exception as e:
         return {"message": str(e)}
