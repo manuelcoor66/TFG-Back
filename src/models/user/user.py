@@ -87,9 +87,7 @@ class User(db.Model):
                 wins=0,
             )
             try:
-                # Agregar el nuevo usuario a la sesión
                 db.session.add(new_user)
-                # Confirmar los cambios en la base de datos
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
