@@ -86,16 +86,17 @@ def create_league(data):
     Create a new league
     """
     try:
-        new_user = League.create_league(
+        new_league = League.create_league(
             data.get("name"),
             data.get("description"),
             data.get("created_by"),
             data.get("points_victory"),
             data.get("points_defeat"),
+            data.get("place"),
             data.get("weeks"),
             data.get("date_start"),
         )
-        return new_user
+        return new_league
     except (LeagueExistsException, Exception) as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422

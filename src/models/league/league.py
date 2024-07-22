@@ -17,9 +17,10 @@ class League(db.Model):
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.String(100))
     created_by = db.Column(db.Integer)
-    enrolments = db.Column(db.Integer)
+    enrolments = db.Column(db.Integer, nullable=True, default=0)
     points_victory = db.Column(db.Integer, nullable=True)
     points_defeat = db.Column(db.Integer, nullable=True)
+    place_id = db.Column(db.Integer, nullable=True)
     weeks = db.Column(db.Integer, nullable=True)
     weeks_played = db.Column(db.Integer, nullable=True)
     date_start = db.Column(db.Date, nullable=True)
@@ -32,6 +33,7 @@ class League(db.Model):
         enrolments,
         points_victory,
         points_defeat,
+        place_id,
         weeks,
         weeks_played,
         date_start,
@@ -42,6 +44,7 @@ class League(db.Model):
         self.enrollments = enrolments
         self.points_victory = points_victory
         self.points_defeat = points_defeat
+        self.place_id = place_id
         self.weeks = weeks
         self.weeks_played = weeks_played
         self.date_start = date_start
@@ -109,6 +112,7 @@ class League(db.Model):
                     "weeks": league.weeks,
                     "weeks_played": league.weeks_played,
                     "date_start": league.date_start,
+                    "place": league.place_id
                 }
 
                 serialized_leagues.append(serialized_league)
@@ -125,11 +129,13 @@ class League(db.Model):
         created_by: int,
         points_victory: int,
         points_defeat: int,
+        place: int,
         weeks: int,
         date_start: date,
     ) -> "League":
         """
         Create a new league
+        :param place:
         :param name:
         :param description:
         :param created_by:
@@ -149,6 +155,7 @@ class League(db.Model):
                 enrolments=0,
                 points_victory=points_victory,
                 points_defeat=points_defeat,
+                place_id=place,
                 weeks=weeks,
                 weeks_played=0,
                 date_start=date_start,
@@ -156,6 +163,7 @@ class League(db.Model):
             try:
                 db.session.add(new_league)
                 db.session.commit()
+
             except Exception as e:
                 db.session.rollback()
                 raise e

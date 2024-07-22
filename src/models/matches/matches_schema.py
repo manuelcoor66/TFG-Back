@@ -7,8 +7,8 @@ class MatchResponse(Schema):
     result = fields.Str(required=True)
     player_name_1 = fields.Str(required=True)
     player_name_2 = fields.Str(required=True)
-    player_name_3 = fields.Str(required=True)
-    player_name_4 = fields.Str(required=True)
+    player_name_3 = fields.Str(required=False)
+    player_name_4 = fields.Str(required=False)
     date = fields.Date(required=True)
     place = fields.Integer(required=True)
 

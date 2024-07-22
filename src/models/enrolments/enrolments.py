@@ -154,6 +154,8 @@ class Enrolment(db.Model):
             paid=paid,
             active=True,
             finalized=False,
+            wins=0,
+            defeats=0,
         )
 
         try:

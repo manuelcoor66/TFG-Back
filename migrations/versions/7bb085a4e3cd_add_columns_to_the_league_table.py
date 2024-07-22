@@ -30,6 +30,7 @@ def upgrade() -> None:
     op.add_column("league", sa.Column("weeks", sa.Integer, nullable=True))
     op.add_column("league", sa.Column("weeks_played", sa.Integer, nullable=True))
     op.add_column("league", sa.Column("date_start", sa.Date, nullable=True))
+    op.add_column("league", sa.Column("place_id", sa.Integer, nullable=False))
 
 
 def downgrade():
@@ -43,3 +44,4 @@ def downgrade():
     op.drop_column("league", "weeks")
     op.drop_column("league", "weeks_played")
     op.drop_column("league", "date_start")
+    op.drop_column("league", "place_id")

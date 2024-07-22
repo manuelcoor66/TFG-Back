@@ -47,11 +47,15 @@ class Matches(db.Model):
                     'result': match.result,
                     'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
                     'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'player_name_3': User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names,
-                    'player_name_4': User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names,
                     'date': match.date,
                     'place': match.place
                 }
+
+                if match.player_id_3 != 0:
+                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+
+                if match.player_id_4 != 0:
+                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
                 serialized_matches.append(serialized_match)
 
@@ -80,11 +84,15 @@ class Matches(db.Model):
                     'result': match.result,
                     'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
                     'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'player_name_3': User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names,
-                    'player_name_4': User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names,
                     'date': match.date,
                     'place': match.place
                 }
+
+                if match.player_id_3 != 0:
+                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+
+                if match.player_id_4 != 0:
+                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
                 serialized_matches.append(serialized_match)
 
@@ -113,11 +121,15 @@ class Matches(db.Model):
                     'result': match.result,
                     'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
                     'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'player_name_3': User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names,
-                    'player_name_4': User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names,
                     'date': match.date,
                     'place': match.place
                 }
+
+                if match.player_id_3 != 0:
+                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+
+                if match.player_id_4 != 0:
+                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
                 serialized_matches.append(serialized_match)
 
@@ -141,11 +153,15 @@ class Matches(db.Model):
                     'result': match.result,
                     'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
                     'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'player_name_3': User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names,
-                    'player_name_4': User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names,
                     'date': match.date,
                     'place': match.place
                 }
+
+                if match.player_id_3 != 0:
+                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+
+                if match.player_id_4 != 0:
+                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
                 serialized_matches.append(serialized_match)
 
@@ -169,11 +185,15 @@ class Matches(db.Model):
                     'result': match.result,
                     'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
                     'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'player_name_3': User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names,
-                    'player_name_4': User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names,
                     'date': match.date,
                     'place': match.place
                 }
+
+                if match.player_id_3 != 0:
+                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+
+                if match.player_id_4 != 0:
+                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
                 serialized_matches.append(serialized_match)
 
