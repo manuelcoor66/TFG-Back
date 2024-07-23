@@ -1,12 +1,16 @@
 from typing import Any
 
 from src.models import db
-from src.models.sports.sports_exception import SportNameException, SportIdException, SportException, \
-    SportNameExistsException
+from src.models.sports.sports_exception import (
+    SportNameException,
+    SportIdException,
+    SportException,
+    SportNameExistsException,
+)
 
 
 class Sports(db.Model):
-    __tablename__ = 'sports'
+    __tablename__ = "sports"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=True)
     icon = db.Column(db.String(20))

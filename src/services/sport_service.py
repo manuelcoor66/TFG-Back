@@ -3,8 +3,12 @@ from flask import jsonify
 from flask_smorest import Blueprint
 
 from src.models.sports import Sports, SportsSchema, SportsListSchema, CreateSportSchema
-from src.models.sports.sports_exception import SportIdException, SportNameException, SportException, \
-    SportNameExistsException
+from src.models.sports.sports_exception import (
+    SportIdException,
+    SportNameException,
+    SportException,
+    SportNameExistsException,
+)
 
 api_url = "/sports"
 api_name = "Sports"
@@ -18,6 +22,7 @@ blp = Blueprint(
     url_prefix=api_url,
     import_name=__name__,
 )
+
 
 @blp.route("/<int:sport_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])

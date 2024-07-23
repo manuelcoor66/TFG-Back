@@ -6,7 +6,7 @@ from .matches_schema import (
     CreateMatchSchema,
     AddNewPlayerSchema,
     MatchAddResponse,
-    AddResultSchema
+    AddResultSchema,
 )
 
 __all__ = [
@@ -17,5 +17,5 @@ __all__ = [
     "CreateMatchSchema",
     "AddNewPlayerSchema",
     "MatchAddResponse",
-    "AddResultSchema"
+    "AddResultSchema",
 ]

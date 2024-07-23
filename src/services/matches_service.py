@@ -9,7 +9,7 @@ from src.models.matches import (
     CreateMatchSchema,
     AddNewPlayerSchema,
     MatchAddResponse,
-    AddResultSchema
+    AddResultSchema,
 )
 from src.models.matches.matches_exception import MatchesLeagueIdException
 from src.models.user.user_exception import UserIdException
@@ -46,7 +46,7 @@ def get_matches_by_league_id(league_id: int):
 @blp.route("/finalized/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, MatchesListSchema)
-def get_matches_by_league_id(user_id: int):
+def get_finalized_matches_by_user_id(user_id: int):
     """
     Get the finalized matches of a user
     """
@@ -61,7 +61,7 @@ def get_matches_by_league_id(user_id: int):
 @blp.route("/active/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, MatchesListSchema)
-def get_matches_by_league_id(user_id: int):
+def get_active_matches_by_user_id(user_id: int):
     """
     Get the active matches of a user
     """
@@ -76,7 +76,7 @@ def get_matches_by_league_id(user_id: int):
 @blp.route("/finalized/league/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, MatchesListSchema)
-def get_matches_by_league_id(league_id: int):
+def get_finalized_matches_by_league_id(league_id: int):
     """
     Get the finalized matches of a league
     """
@@ -93,7 +93,7 @@ def get_matches_by_league_id(league_id: int):
 @blp.route("/active/league/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, MatchesListSchema)
-def get_matches_by_league_id(league_id: int):
+def get_active_matches_by_league_id(league_id: int):
     """
     Get the active matches of a league
     """
@@ -118,7 +118,7 @@ def create_league(data):
             data.get("league_id"),
             data.get("player_name_1"),
             data.get("date"),
-            data.get("place")
+            data.get("place"),
         )
 
         return new_match
@@ -130,29 +130,34 @@ def create_league(data):
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(AddNewPlayerSchema, location="query")
 @blp.response(200, MatchAddResponse)
-def create_league(data):
+def add_player(data):
     """
     Add new player to a match
     """
     try:
-        match = Matches.add_new_player(data.get('match_id'), data.get('player_id'),)
+        match = Matches.add_new_player(
+            data.get("match_id"),
+            data.get("player_id"),
+        )
 
         return match
     except Exception as e:
         return {"message": str(e)}
 
 
-
 @blp.route("/add-result", methods=["POST"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(AddResultSchema, location="query")
 @blp.response(200, MatchAddResponse)
-def create_league(data):
+def add_result(data):
     """
     Add a result to a match
     """
     try:
-        match = Matches.add_result(data.get('match_id'), data.get('result'),)
+        match = Matches.add_result(
+            data.get("match_id"),
+            data.get("result"),
+        )
 
         return match
     except Exception as e:

@@ -7,10 +7,14 @@ from src.models.places import (
     PlaceReturnSchema,
     PlaceReturnListSchema,
     PlaceInputSchema,
-    PlaceInputModifySchema
+    PlaceInputModifySchema,
 )
 
-from src.models.places.places_exception import PlaceIdException, PlaceNameException, PlaceNameExistsException
+from src.models.places.places_exception import (
+    PlaceIdException,
+    PlaceNameException,
+    PlaceNameExistsException,
+)
 
 api_url = "/places"
 api_name = "Places"
@@ -46,7 +50,7 @@ def get_place_by_id(place_id: int):
 @blp.route("/<string:name>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, PlaceReturnSchema)
-def get_place_by_id(name: str):
+def get_place_by_name(name: str):
     """
     Get a place by his name
     """
@@ -63,7 +67,7 @@ def get_place_by_id(name: str):
 @blp.route("/all-places", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, PlaceReturnListSchema)
-def get_place_by_id():
+def get_all_places():
     """
     Get all the places
     """
@@ -74,6 +78,7 @@ def get_place_by_id():
     except Exception as e:
         return {"message": str(e)}
 
+
 @blp.route("/create", methods=["POST"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(PlaceInputSchema, location="query")
@@ -83,9 +88,7 @@ def create_place(data):
     Creates a new place
     """
     try:
-        new_place = Places.add_new_place(
-            data.get("name"), data.get("coordinates")
-        )
+        new_place = Places.add_new_place(data.get("name"), data.get("coordinates"))
 
         return new_place
     except PlaceNameExistsException as e:
@@ -98,13 +101,13 @@ def create_place(data):
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(PlaceInputModifySchema, location="query")
 @blp.response(200, PlaceReturnSchema)
-def create_place(data):
+def modify_place(data):
     """
     Modifies a place
     """
     try:
-        new_place = Places.modify_place(data.get('id'),
-            data.get("name"), data.get("coordinates")
+        new_place = Places.modify_place(
+            data.get("id"), data.get("name"), data.get("coordinates")
         )
 
         return new_place

@@ -29,7 +29,16 @@ class Enrolment(db.Model):
     finalized = db.Column(db.Boolean)
 
     def __init__(
-        self, user_id, league_id, points, matches_played, paid, active, finalized, wins, defeats
+        self,
+        user_id,
+        league_id,
+        points,
+        matches_played,
+        paid,
+        active,
+        finalized,
+        wins,
+        defeats,
     ):
         self.user_id = user_id
         self.league_id = league_id
@@ -65,7 +74,12 @@ class Enrolment(db.Model):
         :param user_id:
         :return:
         """
-        enrolments = db.session.query(Enrolment).filter_by(user_id=user_id).order_by(desc(Enrolment.points)).all()
+        enrolments = (
+            db.session.query(Enrolment)
+            .filter_by(user_id=user_id)
+            .order_by(desc(Enrolment.points))
+            .all()
+        )
 
         serialized_enrolments = []
         for enrolment in enrolments:
@@ -79,7 +93,7 @@ class Enrolment(db.Model):
                 "active": enrolment.active,
                 "finalized": enrolment.finalized,
                 "wins": enrolment.wins,
-                "defeats": enrolment.defeats
+                "defeats": enrolment.defeats,
             }
 
             serialized_enrolments.append(serialized_enrolment)
@@ -93,7 +107,12 @@ class Enrolment(db.Model):
         :param league_id:
         :return:
         """
-        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id).order_by(desc(Enrolment.points)).all()
+        enrolments = (
+            db.session.query(Enrolment)
+            .filter_by(league_id=league_id)
+            .order_by(desc(Enrolment.points))
+            .all()
+        )
 
         if enrolments:
             serialized_enrolments = []
@@ -108,7 +127,7 @@ class Enrolment(db.Model):
                     "active": enrolment.active,
                     "finalized": enrolment.finalized,
                     "wins": enrolment.wins,
-                    "defeats": enrolment.defeats
+                    "defeats": enrolment.defeats,
                 }
 
                 serialized_enrolments.append(serialized_enrolment)
@@ -134,7 +153,7 @@ class Enrolment(db.Model):
                     "active": enrolment.active,
                     "finalized": enrolment.finalized,
                     "wins": enrolment.wins,
-                    "defeats": enrolment.defeats
+                    "defeats": enrolment.defeats,
                 }
 
                 serialized_enrolments.append(serialized_enrolment)
@@ -224,7 +243,12 @@ class Enrolment(db.Model):
         :param league_id:
         :return:
         """
-        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id).order_by(desc(Enrolment.points)).all()
+        enrolments = (
+            db.session.query(Enrolment)
+            .filter_by(league_id=league_id)
+            .order_by(desc(Enrolment.points))
+            .all()
+        )
 
         if enrolments:
             serialized_enrolments = []
@@ -237,7 +261,7 @@ class Enrolment(db.Model):
                     "name": user.name,
                     "points": enrolment.points,
                     "wins": enrolment.wins,
-                    "defeats": enrolment.defeats
+                    "defeats": enrolment.defeats,
                 }
 
                 serialized_enrolments.append(serialized_enrolment)

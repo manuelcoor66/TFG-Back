@@ -150,7 +150,9 @@ def finalize_enrolment(data):
     Finalize an enrolment
     """
     try:
-        enrolments = Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
+        enrolments = Enrolment.finalize_enrolment(
+            data.get("user_id"), data.get("league_id")
+        )
 
         return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentException as e:
@@ -162,7 +164,7 @@ def finalize_enrolment(data):
 @blp.route("/table/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, EnrolmentsLeagueTableListSchema)
-def get_enrolment_by_league_id(league_id: int):
+def get_enrolment_table_by_league_id(league_id: int):
     """
     Get a league enrolments by his id to show
     """

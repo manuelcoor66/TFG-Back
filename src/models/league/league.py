@@ -69,7 +69,7 @@ class League(db.Model):
             user = User.get_user_by_id(league.created_by)
             place = Places.get_place_by_id(league.place_id)
             league.created_by_id = league.created_by
-            league.created_by = user.name + ' ' + user.last_names
+            league.created_by = user.name + " " + user.last_names
             league.place = place.name
 
             return league
@@ -89,7 +89,7 @@ class League(db.Model):
             user = User.get_user_by_id(league.created_by)
             place = Places.get_place_by_id(league.place_id)
             league.created_by_id = league.created_by
-            league.created_by = user.name + ' ' + user.last_names
+            league.created_by = user.name + " " + user.last_names
             league.place = place.name
 
             return league
@@ -110,7 +110,7 @@ class League(db.Model):
                     "id": league.id,
                     "name": league.name,
                     "description": league.description,
-                    "created_by": user.name + ' ' + user.last_names,
+                    "created_by": user.name + " " + user.last_names,
                     "created_by_id": league.created_by,
                     "enrolments": league.enrolments,
                     "points_victory": league.points_victory,
@@ -118,7 +118,7 @@ class League(db.Model):
                     "weeks": league.weeks,
                     "weeks_played": league.weeks_played,
                     "date_start": league.date_start,
-                    "place": place.name
+                    "place": place.name,
                 }
 
                 serialized_leagues.append(serialized_league)

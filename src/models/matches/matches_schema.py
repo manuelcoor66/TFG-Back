@@ -45,4 +45,3 @@ class MatchAddResponse(Schema):
     player_id_4 = fields.Str(required=False)
     date = fields.Date(required=True)
     place = fields.Integer(required=True)
-    

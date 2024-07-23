@@ -1,7 +1,11 @@
 from typing import Any
 
 from src.models import db
-from src.models.places.places_exception import PlaceIdException, PlaceNameException, PlaceNameExistsException
+from src.models.places.places_exception import (
+    PlaceIdException,
+    PlaceNameException,
+    PlaceNameExistsException,
+)
 
 
 class Places(db.Model):
@@ -15,7 +19,9 @@ class Places(db.Model):
         self.coordinates = coordinates
 
     def __repr__(self):
-        return f"<Places(id={self.id}, name={self.name}, coordinates={self.coordinates})>"
+        return (
+            f"<Places(id={self.id}, name={self.name}, coordinates={self.coordinates})>"
+        )
 
     @classmethod
     def get_place_by_id(cls, id: int) -> "Places":

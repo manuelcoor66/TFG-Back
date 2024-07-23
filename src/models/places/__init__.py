@@ -4,7 +4,7 @@ from .places_schema import (
     PlaceReturnSchema,
     PlaceReturnListSchema,
     PlaceInputSchema,
-    PlaceInputModifySchema
+    PlaceInputModifySchema,
 )
 
 __all__ = [
@@ -13,5 +13,5 @@ __all__ = [
     "PlaceReturnSchema",
     "PlaceReturnListSchema",
     "PlaceInputSchema",
-    "PlaceInputModifySchema"
+    "PlaceInputModifySchema",
 ]

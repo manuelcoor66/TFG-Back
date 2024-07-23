@@ -9,7 +9,7 @@ from src.models.user import User
 
 
 class Matches(db.Model):
-    __tablename__ = 'matches'
+    __tablename__ = "matches"
 
     id = db.Column(db.Integer, primary_key=True)
     league_id = db.Column(db.Integer)
@@ -21,8 +21,17 @@ class Matches(db.Model):
     date = db.Column(db.DateTime)
     place = db.Column(db.Integer)
 
-    def __init__(self, league_id, result, player_id_1, player_id_2, player_id_3=None, player_id_4=None, date=None,
-                 place=None):
+    def __init__(
+        self,
+        league_id,
+        result,
+        player_id_1,
+        player_id_2,
+        player_id_3=None,
+        player_id_4=None,
+        date=None,
+        place=None,
+    ):
         self.league_id = league_id
         self.result = result
         self.player_id_1 = player_id_1
@@ -33,7 +42,9 @@ class Matches(db.Model):
         self.place = place
 
     def __repr__(self):
-        return f"<Match(id={self.id}, league_id={self.league_id}, result='{self.result}')"
+        return (
+            f"<Match(id={self.id}, league_id={self.league_id}, result='{self.result}')"
+        )
 
     @classmethod
     def get_matches_list_by_league_id(cls, league_id: int) -> list[dict[str, Any]]:
@@ -43,20 +54,32 @@ class Matches(db.Model):
             serialized_matches = []
             for match in matches:
                 serialized_match = {
-                    'id': match.id,
-                    'league_id': match.league_id,
-                    'result': match.result,
-                    'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                    'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'date': match.date,
-                    'place': match.place
+                    "id": match.id,
+                    "league_id": match.league_id,
+                    "result": match.result,
+                    "player_name_1": User.get_user_by_id(match.player_id_1).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_1).last_names,
+                    "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_2).last_names,
+                    "date": match.date,
+                    "place": match.place,
                 }
 
                 if match.player_id_3 != 0:
-                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+                    serialized_match["player_name_3"] = (
+                        User.get_user_by_id(match.player_id_3).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_3).last_names
+                    )
 
                 if match.player_id_4 != 0:
-                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
+                    serialized_match["player_name_4"] = (
+                        User.get_user_by_id(match.player_id_4).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_4).last_names
+                    )
 
                 serialized_matches.append(serialized_match)
 
@@ -66,34 +89,50 @@ class Matches(db.Model):
 
     @classmethod
     def get_finalized_user_matches(cls, user_id: int) -> list[dict[str, Any]]:
-        matches = db.session.query(Matches).filter(
-            or_(
-                Matches.player_id_1 == user_id,
-                Matches.player_id_2 == user_id,
-                Matches.player_id_3 == user_id,
-                Matches.player_id_4 == user_id
-            ),
-            Matches.date < datetime.datetime.now()
-        ).all()
+        matches = (
+            db.session.query(Matches)
+            .filter(
+                or_(
+                    Matches.player_id_1 == user_id,
+                    Matches.player_id_2 == user_id,
+                    Matches.player_id_3 == user_id,
+                    Matches.player_id_4 == user_id,
+                ),
+                Matches.date < datetime.datetime.now(),
+            )
+            .all()
+        )
 
         if matches:
             serialized_matches = []
             for match in matches:
                 serialized_match = {
-                    'id': match.id,
-                    'league_id': match.league_id,
-                    'result': match.result,
-                    'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                    'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'date': match.date,
-                    'place': match.place
+                    "id": match.id,
+                    "league_id": match.league_id,
+                    "result": match.result,
+                    "player_name_1": User.get_user_by_id(match.player_id_1).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_1).last_names,
+                    "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_2).last_names,
+                    "date": match.date,
+                    "place": match.place,
                 }
 
                 if match.player_id_3 != 0:
-                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+                    serialized_match["player_name_3"] = (
+                        User.get_user_by_id(match.player_id_3).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_3).last_names
+                    )
 
                 if match.player_id_4 != 0:
-                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
+                    serialized_match["player_name_4"] = (
+                        User.get_user_by_id(match.player_id_4).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_4).last_names
+                    )
 
                 serialized_matches.append(serialized_match)
 
@@ -103,34 +142,50 @@ class Matches(db.Model):
 
     @classmethod
     def get_active_user_matches(cls, user_id: int) -> list[dict[str, Any]]:
-        matches = db.session.query(Matches).filter(
-            or_(
-                Matches.player_id_1 == user_id,
-                Matches.player_id_2 == user_id,
-                Matches.player_id_3 == user_id,
-                Matches.player_id_4 == user_id
-            ),
-            Matches.date > datetime.datetime.now()
-        ).all()
+        matches = (
+            db.session.query(Matches)
+            .filter(
+                or_(
+                    Matches.player_id_1 == user_id,
+                    Matches.player_id_2 == user_id,
+                    Matches.player_id_3 == user_id,
+                    Matches.player_id_4 == user_id,
+                ),
+                Matches.date > datetime.datetime.now(),
+            )
+            .all()
+        )
 
         if matches:
             serialized_matches = []
             for match in matches:
                 serialized_match = {
-                    'id': match.id,
-                    'league_id': match.league_id,
-                    'result': match.result,
-                    'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                    'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'date': match.date,
-                    'place': match.place
+                    "id": match.id,
+                    "league_id": match.league_id,
+                    "result": match.result,
+                    "player_name_1": User.get_user_by_id(match.player_id_1).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_1).last_names,
+                    "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_2).last_names,
+                    "date": match.date,
+                    "place": match.place,
                 }
 
                 if match.player_id_3 != 0:
-                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+                    serialized_match["player_name_3"] = (
+                        User.get_user_by_id(match.player_id_3).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_3).last_names
+                    )
 
                 if match.player_id_4 != 0:
-                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
+                    serialized_match["player_name_4"] = (
+                        User.get_user_by_id(match.player_id_4).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_4).last_names
+                    )
 
                 serialized_matches.append(serialized_match)
 
@@ -140,61 +195,91 @@ class Matches(db.Model):
 
     @classmethod
     def get_finalized_league_matches(cls, league_id: int) -> list[dict[str, Any]]:
-            matches = db.session.query(Matches).filter(
-                Matches.date < datetime.datetime.now(),
-                Matches.league_id == league_id
-            ).all()
-
-            if matches:
-                serialized_matches = []
-                for match in matches:
-                    serialized_match = {
-                        'id': match.id,
-                        'league_id': match.league_id,
-                        'result': match.result,
-                        'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                        'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                        'date': match.date,
-                        'place': match.place
-                    }
-
-                    if match.player_id_3 != 0:
-                        serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
-
-                    if match.player_id_4 != 0:
-                        serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
-
-                    serialized_matches.append(serialized_match)
-
-                return serialized_matches
-            else:
-                raise MatchesLeagueIdException
-
-    @classmethod
-    def get_active_league_matches(cls, league_id: int) -> list[dict[str, Any]]:
-        matches = db.session.query(Matches).filter(
-            Matches.date > datetime.datetime.now(),
-            Matches.league_id == league_id
-        ).all()
+        matches = (
+            db.session.query(Matches)
+            .filter(
+                Matches.date < datetime.datetime.now(), Matches.league_id == league_id
+            )
+            .all()
+        )
 
         if matches:
             serialized_matches = []
             for match in matches:
                 serialized_match = {
-                    'id': match.id,
-                    'league_id': match.league_id,
-                    'result': match.result,
-                    'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                    'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'date': match.date,
-                    'place': match.place
+                    "id": match.id,
+                    "league_id": match.league_id,
+                    "result": match.result,
+                    "player_name_1": User.get_user_by_id(match.player_id_1).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_1).last_names,
+                    "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_2).last_names,
+                    "date": match.date,
+                    "place": match.place,
                 }
 
                 if match.player_id_3 != 0:
-                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+                    serialized_match["player_name_3"] = (
+                        User.get_user_by_id(match.player_id_3).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_3).last_names
+                    )
 
                 if match.player_id_4 != 0:
-                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
+                    serialized_match["player_name_4"] = (
+                        User.get_user_by_id(match.player_id_4).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_4).last_names
+                    )
+
+                serialized_matches.append(serialized_match)
+
+            return serialized_matches
+        else:
+            raise MatchesLeagueIdException
+
+    @classmethod
+    def get_active_league_matches(cls, league_id: int) -> list[dict[str, Any]]:
+        matches = (
+            db.session.query(Matches)
+            .filter(
+                Matches.date > datetime.datetime.now(), Matches.league_id == league_id
+            )
+            .all()
+        )
+
+        if matches:
+            serialized_matches = []
+            for match in matches:
+                serialized_match = {
+                    "id": match.id,
+                    "league_id": match.league_id,
+                    "result": match.result,
+                    "player_name_1": User.get_user_by_id(match.player_id_1).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_1).last_names,
+                    "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    + " "
+                    + User.get_user_by_id(match.player_id_2).last_names,
+                    "date": match.date,
+                    "place": match.place,
+                }
+
+                if match.player_id_3 != 0:
+                    serialized_match["player_name_3"] = (
+                        User.get_user_by_id(match.player_id_3).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_3).last_names
+                    )
+
+                if match.player_id_4 != 0:
+                    serialized_match["player_name_4"] = (
+                        User.get_user_by_id(match.player_id_4).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_4).last_names
+                    )
 
                 serialized_matches.append(serialized_match)
 
@@ -204,19 +289,24 @@ class Matches(db.Model):
 
     @classmethod
     def create_league(cls, league_id: int, player_id_1: int, date: Date, place: int):
-        matches = db.session.query(Matches).filter(league_id == league_id,
-            or_(
-                Matches.player_id_1 == player_id_1,
-                Matches.player_id_2 == player_id_1,
-                Matches.player_id_3 == player_id_1,
-                Matches.player_id_4 == player_id_1
-            ),
-            Matches.date > datetime.datetime.now()
-        ).all()
+        matches = (
+            db.session.query(Matches)
+            .filter(
+                league_id == league_id,
+                or_(
+                    Matches.player_id_1 == player_id_1,
+                    Matches.player_id_2 == player_id_1,
+                    Matches.player_id_3 == player_id_1,
+                    Matches.player_id_4 == player_id_1,
+                ),
+                Matches.date > datetime.datetime.now(),
+            )
+            .all()
+        )
         if not matches:
             new_match = Matches(
                 league_id=league_id,
-                result='',
+                result="",
                 player_id_1=player_id_1,
                 player_id_2=0,
                 player_id_3=0,
@@ -235,25 +325,28 @@ class Matches(db.Model):
         else:
             raise UserWithMatch
 
-
     @classmethod
     def add_new_player(cls, match_id: int, player_id: int):
-        match = db.session.query(Matches).filter(
-            Matches.date > datetime.datetime.now(),
-            Matches.id == match_id,
-            and_(
-                Matches.player_id_1 != player_id,
-                Matches.player_id_2 != player_id,
-                Matches.player_id_3 != player_id,
-                Matches.player_id_4 != player_id,
-                or_(
-                    Matches.player_id_1 == 0,
-                    Matches.player_id_2 == 0,
-                    Matches.player_id_3 == 0,
-                    Matches.player_id_4 == 0
-                )
+        match = (
+            db.session.query(Matches)
+            .filter(
+                Matches.date > datetime.datetime.now(),
+                Matches.id == match_id,
+                and_(
+                    Matches.player_id_1 != player_id,
+                    Matches.player_id_2 != player_id,
+                    Matches.player_id_3 != player_id,
+                    Matches.player_id_4 != player_id,
+                    or_(
+                        Matches.player_id_1 == 0,
+                        Matches.player_id_2 == 0,
+                        Matches.player_id_3 == 0,
+                        Matches.player_id_4 == 0,
+                    ),
+                ),
             )
-        ).first()
+            .first()
+        )
 
         if match:
             if match.player_id_1 == 0:
@@ -276,19 +369,22 @@ class Matches(db.Model):
         else:
             raise Exception("No existen partidos.")
 
-
     @classmethod
     def add_result(cls, match_id: int, result: str):
-        match = db.session.query(Matches).filter(
-            Matches.date < datetime.datetime.now(),
-            Matches.id == match_id,
-            and_(
-                Matches.player_id_1 != 0,
-                Matches.player_id_2 != 0,
-                Matches.player_id_3 != 0,
-                Matches.player_id_4 != 0
+        match = (
+            db.session.query(Matches)
+            .filter(
+                Matches.date < datetime.datetime.now(),
+                Matches.id == match_id,
+                and_(
+                    Matches.player_id_1 != 0,
+                    Matches.player_id_2 != 0,
+                    Matches.player_id_3 != 0,
+                    Matches.player_id_4 != 0,
+                ),
             )
-        ).first()
+            .first()
+        )
 
         if match:
             match.result = result
