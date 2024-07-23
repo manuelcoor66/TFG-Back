@@ -43,6 +43,7 @@ def get_enrolment_by_id(enrolment_id: int):
     """
     try:
         league = Enrolment.get_enrolment_by_id(enrolment_id)
+
         return league
     except EnrolmentIdException as e:
         response = jsonify({"message": str(e)})

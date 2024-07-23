@@ -22,13 +22,13 @@ def upgrade() -> None:
     op.create_table(
         'places',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('nombre', sa.String(length=50), nullable=False),
-        sa.Column('coordenadas', sa.String(length=255), nullable=False)
+        sa.Column('name', sa.String(length=50), nullable=False, unique=True),
+        sa.Column('coordinates', sa.String(length=255), nullable=False, unique=True)
     )
 
 
 def downgrade() -> None:
     op.drop_column("places", "id")
-    op.drop_column("places", "nombre")
-    op.drop_column("places", "coordenadas")
+    op.drop_column("places", "name")
+    op.drop_column("places", "coordinates")
     op.drop_table('places')

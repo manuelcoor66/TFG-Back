@@ -5,7 +5,6 @@ from sqlalchemy import desc
 from src.models import db
 from src.models.enrolments.enrolments_exceptions import (
     EnrolmentIdException,
-    EnrolmentUserIdException,
     EnrolmentLeagueIdException,
     EnrolmentsException,
     EnrolmentException,
@@ -43,7 +42,7 @@ class Enrolment(db.Model):
         self.defeats = defeats
 
     def __repr__(self):
-        return f"<Enrolment(id={self.id}, user_id={self.user_id}, league_id={self.league_id}"
+        return f"<Enrolment(id={self.id}, user_id={self.user_id}, league_id={self.league_id})>"
 
     @classmethod
     def get_enrolment_by_id(cls, id: int) -> "Enrolment":
