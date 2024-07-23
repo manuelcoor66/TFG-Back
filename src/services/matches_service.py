@@ -11,6 +11,8 @@ from src.models.matches import (
     MatchAddResponse,
     AddResultSchema
 )
+from src.models.matches.matches_exception import MatchesLeagueIdException
+from src.models.user.user_exception import UserIdException
 
 api_url = "/matches"
 api_name = "Matches"
@@ -82,8 +84,10 @@ def get_matches_by_league_id(league_id: int):
         matches = Matches.get_finalized_league_matches(league_id)
 
         return {"items": matches, "total": len(matches)}
-    except Exception as e:
-        return {"message": str(e)}
+    except (MatchesLeagueIdException, UserIdException) as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route("/active/league/<int:league_id>", methods=["GET"])

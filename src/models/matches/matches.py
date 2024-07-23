@@ -4,7 +4,7 @@ from sqlalchemy import or_, Date, and_
 from typing import Any
 
 from src.models import db
-from src.models.matches.matches_exception import UserWithMatch
+from src.models.matches.matches_exception import UserWithMatch, MatchesLeagueIdException
 from src.models.user import User
 
 
@@ -140,35 +140,35 @@ class Matches(db.Model):
 
     @classmethod
     def get_finalized_league_matches(cls, league_id: int) -> list[dict[str, Any]]:
-        matches = db.session.query(Matches).filter(
-            Matches.date < datetime.datetime.now(),
-            Matches.league_id == league_id
-        ).all()
+            matches = db.session.query(Matches).filter(
+                Matches.date < datetime.datetime.now(),
+                Matches.league_id == league_id
+            ).all()
 
-        if matches:
-            serialized_matches = []
-            for match in matches:
-                serialized_match = {
-                    'id': match.id,
-                    'league_id': match.league_id,
-                    'result': match.result,
-                    'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
-                    'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
-                    'date': match.date,
-                    'place': match.place
-                }
+            if matches:
+                serialized_matches = []
+                for match in matches:
+                    serialized_match = {
+                        'id': match.id,
+                        'league_id': match.league_id,
+                        'result': match.result,
+                        'player_name_1': User.get_user_by_id(match.player_id_1).name + ' ' + User.get_user_by_id(match.player_id_1).last_names,
+                        'player_name_2': User.get_user_by_id(match.player_id_2).name + ' ' + User.get_user_by_id(match.player_id_2).last_names,
+                        'date': match.date,
+                        'place': match.place
+                    }
 
-                if match.player_id_3 != 0:
-                    serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
+                    if match.player_id_3 != 0:
+                        serialized_match['player_name_3'] = User.get_user_by_id(match.player_id_3).name + ' ' + User.get_user_by_id(match.player_id_3).last_names
 
-                if match.player_id_4 != 0:
-                    serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
+                    if match.player_id_4 != 0:
+                        serialized_match['player_name_4'] = User.get_user_by_id(match.player_id_4).name + ' ' + User.get_user_by_id(match.player_id_4).last_names
 
-                serialized_matches.append(serialized_match)
+                    serialized_matches.append(serialized_match)
 
-            return serialized_matches
-        else:
-            raise Exception("No existen partidos.")
+                return serialized_matches
+            else:
+                raise MatchesLeagueIdException
 
     @classmethod
     def get_active_league_matches(cls, league_id: int) -> list[dict[str, Any]]:
