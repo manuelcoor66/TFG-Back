@@ -10,7 +10,7 @@ class LeagueResponse(Schema):
     enrolments = fields.Integer(required=True)
     points_victory = fields.Int(required=True)
     points_defeat = fields.Int(required=True)
-    place = fields.Int(required=True)
+    place = fields.Str(required=True)
     weeks = fields.Int(required=True)
     weeks_played = fields.Int(required=True)
     date_start = fields.Date(required=True)

@@ -208,7 +208,9 @@ class Enrolment(db.Model):
             try:
                 db.session.delete(enrolment)
                 db.session.commit()
-                return cls.get_enrolments_by_user_id(user_id)
+
+                print(cls.get_enrolments_by_league_id(league_id))
+                return cls.get_enrolments_by_league_id(league_id)
             except Exception as e:
                 db.session.rollback()
                 raise e

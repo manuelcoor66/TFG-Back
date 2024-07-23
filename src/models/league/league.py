@@ -8,6 +8,7 @@ from src.models.league.league_exceptions import (
 )
 
 from src.models import db
+from src.models.places import Places
 from src.models.user import User
 
 
@@ -66,8 +67,10 @@ class League(db.Model):
 
         if league:
             user = User.get_user_by_id(league.created_by)
+            place = Places.get_place_by_id(league.place_id)
             league.created_by_id = league.created_by
             league.created_by = user.name + ' ' + user.last_names
+            league.place = place.name
 
             return league
         else:
@@ -84,8 +87,10 @@ class League(db.Model):
 
         if league:
             user = User.get_user_by_id(league.created_by)
+            place = Places.get_place_by_id(league.place_id)
             league.created_by_id = league.created_by
             league.created_by = user.name + ' ' + user.last_names
+            league.place = place.name
 
             return league
         else:
@@ -99,6 +104,7 @@ class League(db.Model):
             serialized_leagues = []
             for league in leagues:
                 user = User.get_user_by_id(league.created_by)
+                place = Places.get_place_by_id(league.place_id)
 
                 serialized_league = {
                     "id": league.id,
@@ -112,7 +118,7 @@ class League(db.Model):
                     "weeks": league.weeks,
                     "weeks_played": league.weeks_played,
                     "date_start": league.date_start,
-                    "place": league.place_id
+                    "place": place.name
                 }
 
                 serialized_leagues.append(serialized_league)
