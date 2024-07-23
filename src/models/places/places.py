@@ -15,7 +15,7 @@ class Places(db.Model):
         self.coordinates = coordinates
 
     def __repr__(self):
-        return f"<Places(id={self.id}, name={self.name}, coordinates={self})>"
+        return f"<Places(id={self.id}, name={self.name}, coordinates={self.coordinates})>"
 
     @classmethod
     def get_place_by_id(cls, id: int) -> "Places":
@@ -53,7 +53,6 @@ class Places(db.Model):
         else:
             raise Exception("No existen places.")
 
-
     @classmethod
     def add_new_place(cls, name: str, coordinates: str) -> "Places":
         new_place = Places(name=name, coordinates=coordinates)
@@ -70,7 +69,6 @@ class Places(db.Model):
                 raise e
         else:
             raise PlaceNameExistsException
-
 
     @classmethod
     def modify_place(cls, id: int, name: str, coordinates: str):
