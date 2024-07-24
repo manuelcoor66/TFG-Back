@@ -9,6 +9,7 @@ from src.models.league.league_exceptions import (
 
 from src.models import db
 from src.models.places import Places
+from src.models.sports import Sports
 from src.models.user import User
 
 
@@ -22,6 +23,7 @@ class League(db.Model):
     points_victory = db.Column(db.Integer, nullable=True)
     points_defeat = db.Column(db.Integer, nullable=True)
     place_id = db.Column(db.Integer, nullable=True)
+    sport_id = db.Column(db.Integer, nullable=True)
     weeks = db.Column(db.Integer, nullable=True)
     weeks_played = db.Column(db.Integer, nullable=True)
     date_start = db.Column(db.Date, nullable=True)
@@ -35,6 +37,7 @@ class League(db.Model):
         points_victory,
         points_defeat,
         place_id,
+        sport_id,
         weeks,
         weeks_played,
         date_start,
@@ -46,6 +49,7 @@ class League(db.Model):
         self.points_victory = points_victory
         self.points_defeat = points_defeat
         self.place_id = place_id
+        self.sport_id = sport_id
         self.weeks = weeks
         self.weeks_played = weeks_played
         self.date_start = date_start
@@ -105,6 +109,7 @@ class League(db.Model):
             for league in leagues:
                 user = User.get_user_by_id(league.created_by)
                 place = Places.get_place_by_id(league.place_id)
+                sport = Sports.get_sports_by_id(league.sport_id)
 
                 serialized_league = {
                     "id": league.id,
@@ -119,6 +124,8 @@ class League(db.Model):
                     "weeks_played": league.weeks_played,
                     "date_start": league.date_start,
                     "place": place.name,
+                    "sport": sport.name,
+                    "sport_icon": sport.icon
                 }
 
                 serialized_leagues.append(serialized_league)
@@ -276,3 +283,27 @@ class League(db.Model):
                 raise e
         else:
             raise LeagueIdException
+
+    @classmethod
+    def add_enrolment_to_league(cls, league_id: int):
+        league = cls.get_league_by_id(league_id)
+
+        try:
+            league.enrolments = league.enrolments + 1
+            print(league.created_by)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    @classmethod
+    def delete_enrolment_to_league(cls, league_id: int):
+        league = cls.get_league_by_id(league_id)
+
+        league.enrolments -= 1
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e

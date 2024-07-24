@@ -15,6 +15,7 @@ class LeagueResponse(Schema):
     weeks_played = fields.Int(required=True)
     date_start = fields.Date(required=True)
     sport = fields.String(required=True)
+    sport_icon = fields.String(required=True)
 
 
 class LeagueListSchema(Schema):

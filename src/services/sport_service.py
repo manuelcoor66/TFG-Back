@@ -63,7 +63,7 @@ def get_sport_by_name(sport_name: str):
 @blp.response(200, SportsListSchema)
 def get_place_by_id():
     """
-    Get all the places
+    Get all the sports
     """
     try:
         sports = Sports.get_all_sports()

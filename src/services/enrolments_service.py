@@ -144,7 +144,7 @@ def add_match(data):
 @blp.route("/finalize_enrolment", methods=["PUT"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(EnrolmentSchema, location="query")
-@blp.response(200, EnrolmentListSchema)
+@blp.response(200)
 def finalize_enrolment(data):
     """
     Finalize an enrolment
@@ -153,8 +153,6 @@ def finalize_enrolment(data):
         enrolments = Enrolment.finalize_enrolment(
             data.get("user_id"), data.get("league_id")
         )
-
-        return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422

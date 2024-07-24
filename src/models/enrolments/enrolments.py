@@ -175,10 +175,13 @@ class Enrolment(db.Model):
             wins=0,
             defeats=0,
         )
+        league = db.session.query(League).filter_by(id=league_id).first()
 
         try:
+            league.enrolments += 1
             db.session.add(new_enrolment)
             db.session.commit()
+
             return new_enrolment
         except Exception as e:
             db.session.rollback()
@@ -221,15 +224,14 @@ class Enrolment(db.Model):
             .filter_by(league_id=league_id, user_id=user_id)
             .first()
         )
+        league = db.session.query(League).filter_by(id=league_id).first()
 
         if enrolment:
             enrolment.finalized = True
             try:
+                league.enrolments -= 1
                 db.session.delete(enrolment)
                 db.session.commit()
-
-                print(cls.get_enrolments_by_league_id(league_id))
-                return cls.get_enrolments_by_league_id(league_id)
             except Exception as e:
                 db.session.rollback()
                 raise e
