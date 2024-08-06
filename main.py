@@ -9,6 +9,7 @@ from src.services import (
     matches_service,
     place_service,
     sport_service,
+    achievements_service
 )
 
 # Crear la aplicación Flask
@@ -40,5 +41,6 @@ api.register_blueprint(enrolments_service.blp)
 api.register_blueprint(matches_service.blp)
 api.register_blueprint(place_service.blp)
 api.register_blueprint(sport_service.blp)
+api.register_blueprint(achievements_service.blp)
 if __name__ == "__main__":
     app.run(debug=True)
