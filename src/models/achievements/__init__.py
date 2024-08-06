@@ -3,7 +3,9 @@ from .achievements import Achievements, db
 from .achievements_schema import (
     AchievementsInputSchema,
     AchievementsListSchema,
-    CreateAchievementSchema
+    CreateAchievementSchema,
+    UserAchievementsSchema,
+    UserAchievementsListSchema,
 )
 
 __all__ = [
@@ -11,5 +13,7 @@ __all__ = [
     "Achievements",
     "AchievementsInputSchema",
     "AchievementsListSchema",
-    "CreateAchievementSchema"
+    "CreateAchievementSchema",
+    "UserAchievementsSchema",
+    "UserAchievementsListSchema",
 ]

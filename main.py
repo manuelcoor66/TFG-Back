@@ -9,7 +9,7 @@ from src.services import (
     matches_service,
     place_service,
     sport_service,
-    achievements_service
+    achievements_service,
 )
 
 # Crear la aplicación Flask

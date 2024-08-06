@@ -5,9 +5,14 @@ from flask_smorest import Blueprint
 from src.models.achievements import (
     Achievements,
     AchievementsListSchema,
-    CreateAchievementSchema, AchievementsInputSchema
+    CreateAchievementSchema,
+    AchievementsInputSchema,
+    UserAchievementsListSchema,
 )
-from src.models.achievements.achievements_exceptions import AchievementsException, AchievementExistsException
+from src.models.achievements.achievements_exceptions import (
+    AchievementsException,
+    AchievementExistsException,
+)
 
 api_url = "/achievements"
 api_name = "Achievements"
@@ -53,7 +58,7 @@ def create_achievement(data):
             data.get("description"),
             data.get("table"),
             data.get("column"),
-            data.get("amount")
+            data.get("amount"),
         )
 
         return new_achievement
@@ -67,11 +72,11 @@ def create_achievement(data):
 
 @blp.route("users/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200)
+@blp.response(200, UserAchievementsListSchema)
 def get_users_achievements(user_id: int):
     """
     Get all the users achievements
     """
     user_achievements = Achievements.get_user_achievements(user_id)
 
-    return user_achievements
+    return {"items": user_achievements, "total": len(user_achievements)}

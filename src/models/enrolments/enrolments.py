@@ -276,37 +276,38 @@ class Enrolment(db.Model):
     @classmethod
     def get_users_with_max_points_per_league(cls):
         # Subconsulta para obtener el máximo de puntos por league_id en inscripciones finalizadas
-        subquery = db.session.query(
-            Enrolment.league_id,
-            func.max(Enrolment.points).label("max_points")
-        ).filter(
-            Enrolment.finalized == True
-        ).group_by(
-            Enrolment.league_id
-        ).subquery()
+        subquery = (
+            db.session.query(
+                Enrolment.league_id, func.max(Enrolment.points).label("max_points")
+            )
+            .filter(Enrolment.finalized)
+            .group_by(Enrolment.league_id)
+            .subquery()
+        )
 
         # Consulta principal para unir la subconsulta con la tabla de inscripciones
-        results = db.session.query(
-            Enrolment.user_id,
-            Enrolment.league_id,
-            Enrolment.points
-        ).join(
-            subquery,
-            and_(
-                Enrolment.league_id == subquery.c.league_id,
-                Enrolment.points == subquery.c.max_points
+        results = (
+            db.session.query(Enrolment.user_id, Enrolment.league_id, Enrolment.points)
+            .join(
+                subquery,
+                and_(
+                    Enrolment.league_id == subquery.c.league_id,
+                    Enrolment.points == subquery.c.max_points,
+                ),
             )
-        ).filter(
-            Enrolment.finalized == True
-        ).all()
+            .filter(Enrolment.finalized)
+            .all()
+        )
 
         # Serializar los resultados
         users_with_max_points = []
         for result in results:
-            users_with_max_points.append({
-                "user_id": result.user_id,
-                "league_id": result.league_id,
-                "points": result.points
-            })
+            users_with_max_points.append(
+                {
+                    "user_id": result.user_id,
+                    "league_id": result.league_id,
+                    "points": result.points,
+                }
+            )
 
         return users_with_max_points
