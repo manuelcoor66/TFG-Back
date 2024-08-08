@@ -61,6 +61,20 @@ class User(db.Model):
             raise UserIdException()
 
     @classmethod
+    def get_user_name(cls, user_id: int) -> str:
+        """
+        Get an existing user with his names
+        :param user_id:
+        :return:
+        """
+        user = db.session.query(User).filter_by(id=user_id).first()
+
+        if user:
+            return user.name + " " + user.last_names
+        else:
+            raise UserIdException()
+
+    @classmethod
     def create_user(
         cls, name: str, last_names: str, email: str, password: str, security_word: str
     ) -> "User":
@@ -76,7 +90,6 @@ class User(db.Model):
         user = db.session.query(User).filter_by(email=email).first()
 
         if user is None:
-            # Crear un nuevo objeto de usuario
             new_user = User(
                 name=name,
                 last_names=last_names,
