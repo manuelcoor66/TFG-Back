@@ -19,6 +19,7 @@ class CreateTicketScheme(Schema):
 
 
 class TicketUserScheme(Schema):
+    id = fields.Integer(required=True)
     league_name = fields.String(required=True)
     user_name = fields.String(required=True)
     state = fields.Enum(TicketState, required=True)

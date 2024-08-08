@@ -58,6 +58,7 @@ class Ticket(db.Model):
                 league = League.get_league_by_id(ticket.league_id)
 
                 serialized_ticket = {
+                    "id": ticket.id,
                     "league_name": league.name,
                     "user_name": user_name,
                     "state": ticket.state,
