@@ -125,7 +125,7 @@ class League(db.Model):
                     "date_start": league.date_start,
                     "place": place.name,
                     "sport": sport.name,
-                    "sport_icon": sport.icon
+                    "sport_icon": sport.icon,
                 }
 
                 serialized_leagues.append(serialized_league)

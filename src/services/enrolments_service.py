@@ -150,9 +150,7 @@ def finalize_enrolment(data):
     Finalize an enrolment
     """
     try:
-        enrolments = Enrolment.finalize_enrolment(
-            data.get("user_id"), data.get("league_id")
-        )
+        Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
     except EnrolmentException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
