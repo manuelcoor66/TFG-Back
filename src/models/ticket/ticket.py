@@ -7,14 +7,14 @@ from src.models.league import League
 from src.models.ticket.ticket_exception import (
     TicketIdException,
     TicketsException,
-    UserTicketsException
+    UserTicketsException,
 )
 from src.models.user import User
 from src.utils.ticketEnum import TicketState
 
 
 class Ticket(db.Model):
-    __tablename__ = 'ticket'
+    __tablename__ = "ticket"
     id = db.Column(db.Integer, primary_key=True)
     league_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer)
@@ -28,10 +28,10 @@ class Ticket(db.Model):
         self.date = date
 
     def __repr__(self):
-        return f'<Ticket(id={self.id}, state={self.state}, date={self.date})>'
+        return f"<Ticket(id={self.id}, state={self.state}, date={self.date})>"
 
     @classmethod
-    def get_by_id(cls, id: int) -> 'Ticket':
+    def get_by_id(cls, id: int) -> "Ticket":
         """
         Returns an existing ticket
         :return:
@@ -58,10 +58,10 @@ class Ticket(db.Model):
                 league = League.get_league_by_id(ticket.league_id)
 
                 serialized_ticket = {
-                    'league_name': league.name,
-                    'user_name': user_name,
-                    'state': ticket.state,
-                    'date': ticket.date
+                    "league_name": league.name,
+                    "user_name": user_name,
+                    "state": ticket.state,
+                    "date": ticket.date,
                 }
 
                 serialized_tickets.append(serialized_ticket)
@@ -71,7 +71,9 @@ class Ticket(db.Model):
             raise TicketsException
 
     @classmethod
-    def add_new_ticket(cls, league_id: int, user_id: int, state: TicketState, date: Date) -> 'Ticket':
+    def add_new_ticket(
+        cls, league_id: int, user_id: int, state: TicketState, date: Date
+    ) -> "Ticket":
         """
         Creates a new ticket
         :param league_id:
@@ -82,10 +84,7 @@ class Ticket(db.Model):
         """
         print(state.name)
         new_ticket = Ticket(
-            league_id=league_id,
-            user_id=user_id,
-            state=state.name,
-            date=date
+            league_id=league_id, user_id=user_id, state=state.name, date=date
         )
         print(new_ticket.state)
         try:
@@ -109,7 +108,7 @@ class Ticket(db.Model):
             db.session.query(
                 Ticket.user_id,
                 Ticket.league_id,
-                func.max(Ticket.date).label('max_date')
+                func.max(Ticket.date).label("max_date"),
             )
             .filter_by(user_id=user_id)
             .group_by(Ticket.user_id, Ticket.league_id)
@@ -118,9 +117,12 @@ class Ticket(db.Model):
 
         tickets = (
             db.session.query(Ticket)
-            .join(subquery, (Ticket.user_id == subquery.c.user_id) &
-                  (Ticket.league_id == subquery.c.league_id) &
-                  (Ticket.date == subquery.c.max_date))
+            .join(
+                subquery,
+                (Ticket.user_id == subquery.c.user_id)
+                & (Ticket.league_id == subquery.c.league_id)
+                & (Ticket.date == subquery.c.max_date),
+            )
             .all()
         )
 
@@ -131,10 +133,10 @@ class Ticket(db.Model):
                 league = League.get_league_by_id(ticket.league_id)
 
                 serialized_ticket = {
-                    'league_name': league.name,
-                    'user_name': user.name + " " + user.last_names,
-                    'state': ticket.state,
-                    'date': ticket.date
+                    "league_name": league.name,
+                    "user_name": user.name + " " + user.last_names,
+                    "state": ticket.state,
+                    "date": ticket.date,
                 }
 
                 serialized_tickets.append(serialized_ticket)

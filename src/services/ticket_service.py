@@ -6,12 +6,12 @@ from src.models.ticket import (
     Ticket,
     TicketInputScheme,
     TicketUserListSchema,
-    CreateTicketScheme
+    CreateTicketScheme,
 )
 from src.models.ticket.ticket_exception import (
     TicketsException,
     TicketIdException,
-    UserTicketsException
+    UserTicketsException,
 )
 
 api_url = "/ticket"
@@ -48,7 +48,7 @@ def get_ticket_by_id(ticket_id: int):
 @blp.route("/user/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, TicketUserListSchema)
-def get_ticket_by_id(user_id: int):
+def get_user_tickets(user_id: int):
     """
     Get all the tickets of an user
     """
@@ -89,7 +89,10 @@ def create_ticket(data):
     """
     try:
         new_ticket = Ticket.add_new_ticket(
-            data.get("league_id"), data.get("user_id"), data.get("state"), data.get("date")
+            data.get("league_id"),
+            data.get("user_id"),
+            data.get("state"),
+            data.get("date"),
         )
         print(new_ticket)
 

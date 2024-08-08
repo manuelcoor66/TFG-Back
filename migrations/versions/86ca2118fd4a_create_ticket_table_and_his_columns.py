@@ -5,6 +5,7 @@ Revises: cd23ffdc8259
 Create Date: 2024-08-08 18:15:09.757427
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -13,8 +14,8 @@ import sqlalchemy as sa
 from src.utils.ticketEnum import TicketState
 
 # revision identifiers, used by Alembic.
-revision: str = '86ca2118fd4a'
-down_revision: Union[str, None] = 'cd23ffdc8259'
+revision: str = "86ca2118fd4a"
+down_revision: Union[str, None] = "cd23ffdc8259"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
