@@ -134,7 +134,7 @@ class Enrolment(db.Model):
 
             return serialized_enrolments
         else:
-            raise EnrolmentLeagueIdException
+            return []
 
     @classmethod
     def get_all_enrolments(cls) -> list[dict[str, Any]]:
@@ -235,6 +235,8 @@ class Enrolment(db.Model):
             except Exception as e:
                 db.session.rollback()
                 raise e
+
+            return Enrolment.get_enrolments_by_league_id(league_id=league_id)
         else:
             raise EnrolmentException
 
@@ -311,3 +313,31 @@ class Enrolment(db.Model):
             )
 
         return users_with_max_points
+
+    @classmethod
+    def add_result(cls, user_id, league_id, win: bool):
+        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id, user_id=user_id).all()
+
+        if enrolments:
+            for enrolment in enrolments:
+                league = db.session.query(League).filter_by(id=league_id).first()
+
+                if win:
+                    enrolment.points += league.points_victory
+                    enrolment.wins += 1
+                    User.add_new_win(user_id)
+                else:
+                    enrolment.points += league.points_defeat
+                    enrolment.defeats += 1
+                    User.add_new_match(user_id)
+
+            try:
+                db.session.commit()
+                print(enrolments)
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        else:
+            raise EnrolmentLeagueIdException
+
+

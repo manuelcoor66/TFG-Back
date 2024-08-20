@@ -47,3 +47,9 @@ class EnrolmentsLeagueTableSchema(Schema):
 class EnrolmentsLeagueTableListSchema(Schema):
     items = fields.List(fields.Nested(EnrolmentsLeagueTableSchema))
     total = fields.Int(required=True)
+
+
+class AddEnrolmentResultSchema(Schema):
+    user_id = fields.Integer(required=True)
+    league_id = fields.Integer(required=True)
+    win = fields.Boolean(required=True)

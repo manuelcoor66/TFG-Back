@@ -9,6 +9,7 @@ from src.models.enrolments import (
     AddMatchSchema,
     EnrolmentSchema,
     EnrolmentsLeagueTableListSchema,
+    AddEnrolmentResultSchema,
 )
 from src.models.enrolments.enrolments import Enrolment
 from src.models.enrolments.enrolments_exceptions import (
@@ -144,13 +145,15 @@ def add_match(data):
 @blp.route("/finalize_enrolment", methods=["PUT"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(EnrolmentSchema, location="query")
-@blp.response(200)
+@blp.response(200, EnrolmentListSchema)
 def finalize_enrolment(data):
     """
     Finalize an enrolment
     """
     try:
-        Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
+        enrolments = Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
+
+        return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
@@ -168,6 +171,24 @@ def get_enrolment_table_by_league_id(league_id: int):
         enrolments = Enrolment.get_enrolments_table_by_league_id(league_id)
 
         return {"items": enrolments, "total": len(enrolments)}
+    except EnrolmentLeagueIdException as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/add_result", methods=["POST"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(AddEnrolmentResultSchema, location="query")
+@blp.response(200)
+def get_enrolment_table_by_league_id(data):
+    """
+    Add an enrolment result
+    """
+    try:
+        enrolment = Enrolment.add_result(data.get("user_id"), data.get("league_id"), data.get("win"))
+
+        return enrolment
     except EnrolmentLeagueIdException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422

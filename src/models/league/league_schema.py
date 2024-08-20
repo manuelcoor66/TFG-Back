@@ -16,6 +16,7 @@ class LeagueResponse(Schema):
     date_start = fields.Date(required=True)
     sport = fields.String(required=True)
     sport_icon = fields.String(required=True)
+    price = fields.Int(required=True)
 
 
 class LeagueListSchema(Schema):
@@ -33,6 +34,7 @@ class CreateLeagueSchema(Schema):
     weeks = fields.Int(required=True)
     date_start = fields.Date(required=True)
     sport_id = fields.Integer(required=True)
+    price = fields.Int(required=True)
 
 
 class ModifyLeagueResponse(Schema):

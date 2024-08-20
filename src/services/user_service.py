@@ -201,7 +201,7 @@ def add_new_win(data):
     Add a new win to the user
     """
     try:
-        return User.add_new_win(data.get("email"))
+        return User.add_new_win(data.get("id"))
     except UserEmailException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
@@ -217,7 +217,7 @@ def add_new_match(data):
     Add a new match to the user
     """
     try:
-        return User.add_new_match(data.get("email"))
+        return User.add_new_match(data.get("id"))
     except UserEmailException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422

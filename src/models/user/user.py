@@ -230,8 +230,8 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
-    def add_new_win(cls, email: str):
-        user = cls.get_user_by_email(email)
+    def add_new_win(cls, id: int):
+        user = cls.get_user_by_id(id)
         if user:
             user.matches += 1
             user.wins += 1
@@ -246,8 +246,8 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
-    def add_new_match(cls, email: str):
-        user = cls.get_user_by_email(email)
+    def add_new_match(cls, id: int):
+        user = cls.get_user_by_id(id)
 
         if user:
             user.matches += 1

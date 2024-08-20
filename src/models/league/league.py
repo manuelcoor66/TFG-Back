@@ -27,6 +27,7 @@ class League(db.Model):
     weeks = db.Column(db.Integer, nullable=True)
     weeks_played = db.Column(db.Integer, nullable=True)
     date_start = db.Column(db.Date, nullable=True)
+    price = db.Column(db.Integer, nullable=True)
 
     def __init__(
         self,
@@ -41,6 +42,7 @@ class League(db.Model):
         weeks,
         weeks_played,
         date_start,
+        price
     ):
         self.name = name
         self.description = description
@@ -53,6 +55,7 @@ class League(db.Model):
         self.weeks = weeks
         self.weeks_played = weeks_played
         self.date_start = date_start
+        self.price = price
 
     def __repr__(self) -> str:
         """
@@ -61,22 +64,37 @@ class League(db.Model):
         return f"<League {self.name}>"
 
     @classmethod
-    def get_league_by_id(cls, league_id: int) -> "League":
+    def get_league_by_id(cls, league_id: int):
         """
         Get an existing league
         :param league_id:
         :return: The searched league
         """
         league = db.session.query(League).filter_by(id=league_id).first()
+        user = User.get_user_by_id(league.created_by)
+        place = Places.get_place_by_id(league.place_id)
+        sport = Sports.get_sports_by_id(league.sport_id)
 
         if league:
-            user = User.get_user_by_id(league.created_by)
-            place = Places.get_place_by_id(league.place_id)
-            league.created_by_id = league.created_by
-            league.created_by = user.name + " " + user.last_names
-            league.place = place.name
+            serialized_league = {
+                "id": league.id,
+                "name": league.name,
+                "description": league.description,
+                "created_by": user.name + " " + user.last_names,
+                "created_by_id": league.created_by,
+                "enrolments": league.enrolments,
+                "points_victory": league.points_victory,
+                "points_defeat": league.points_defeat,
+                "weeks": league.weeks,
+                "weeks_played": league.weeks_played,
+                "date_start": league.date_start,
+                "place": place.name,
+                "sport": sport.name,
+                "sport_icon": sport.icon,
+                "price": league.price
+            }
 
-            return league
+            return serialized_league
         else:
             raise LeagueIdException
 
@@ -95,6 +113,7 @@ class League(db.Model):
             league.created_by_id = league.created_by
             league.created_by = user.name + " " + user.last_names
             league.place = place.name
+            league.sport = Sports.get_sports_by_id(league.sport_id).name
 
             return league
         else:
@@ -126,6 +145,7 @@ class League(db.Model):
                     "place": place.name,
                     "sport": sport.name,
                     "sport_icon": sport.icon,
+                    "price": league.price
                 }
 
                 serialized_leagues.append(serialized_league)
@@ -145,6 +165,8 @@ class League(db.Model):
         place: int,
         weeks: int,
         date_start: date,
+        sport_id: int,
+        price: int
     ) -> "League":
         """
         Create a new league
@@ -172,6 +194,8 @@ class League(db.Model):
                 weeks=weeks,
                 weeks_played=0,
                 date_start=date_start,
+                price=price,
+                sport_id=sport_id,
             )
             try:
                 db.session.add(new_league)
@@ -210,7 +234,6 @@ class League(db.Model):
         :param league_name:
         """
         league = cls.get_league_by_name(league_name)
-        print(league.name)
 
         if league:
             try:
@@ -244,7 +267,7 @@ class League(db.Model):
         :param date_start:
         :return: The updated league
         """
-        league = cls.get_league_by_id(id)
+        league = db.session.query(League).filter_by(id=id).first()
 
         if league is not None:
             league.name = name

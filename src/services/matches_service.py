@@ -157,6 +157,10 @@ def add_result(data):
         match = Matches.add_result(
             data.get("match_id"),
             data.get("result"),
+            data.get("win_player_1") == "true",
+            data.get("win_player_2") == "true",
+            data.get("win_player_3") == "true",
+            data.get("win_player_4") == "true",
         )
 
         return match

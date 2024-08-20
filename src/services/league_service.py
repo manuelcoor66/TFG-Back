@@ -32,13 +32,15 @@ blp = Blueprint(
 
 @blp.route("/<int:league_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.response(200, LeagueResponse)
+@blp.response(200)
 def get_league_by_id(league_id: int):
     """
     Get a league by his id
     """
     try:
         league = League.get_league_by_id(league_id)
+
+        print(league)
         return league
     except LeagueIdException as e:
         response = jsonify({"message": str(e)})
@@ -54,8 +56,9 @@ def get_league_by_name(league_name: str):
     Get a league by his name
     """
     try:
-        new_user = League.get_league_by_name(league_name)
-        return new_user
+        league = League.get_league_by_name(league_name)
+
+        return league
     except LeagueNameException as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
@@ -95,6 +98,8 @@ def create_league(data):
             data.get("place"),
             data.get("weeks"),
             data.get("date_start"),
+            data.get("sport_id"),
+            data.get("price"),
         )
         return new_league
     except (LeagueExistsException, Exception) as e:
@@ -139,7 +144,7 @@ def delete_league_by_name(league_name: str):
 @blp.response(200, LeagueResponse)
 def modify_league(data):
     """
-    Modify an existing user
+    Modify an existing league
     """
     try:
         new_user = League.modify_league(
@@ -165,8 +170,6 @@ def modify_league(data):
 def finalize_league(data):
     """
     Finalize an existing league
-    :param data:
-    :return:
     """
     try:
         League.finalize_league(data.get("id"))

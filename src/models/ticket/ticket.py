@@ -83,17 +83,14 @@ class Ticket(db.Model):
         :param date:
         :return:
         """
-        print(state.name)
         new_ticket = Ticket(
             league_id=league_id, user_id=user_id, state=state.name, date=date
         )
-        print(new_ticket.state)
         try:
             db.session.add(new_ticket)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print("Error occurred:", e)
             raise e
 
         return new_ticket
@@ -127,11 +124,12 @@ class Ticket(db.Model):
             .all()
         )
 
+        user = User.get_user_by_id(user_id)
         if tickets:
             serialized_tickets = []
             for ticket in tickets:
-                user = User.get_user_by_id(ticket.user_id)
-                league = League.get_league_by_id(ticket.league_id)
+                print(ticket)
+                league = league = db.session.query(League).filter_by(id=ticket.league_id).first()
 
                 serialized_ticket = {
                     "id": league.id,

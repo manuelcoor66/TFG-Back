@@ -42,7 +42,7 @@ class UserInputSecurityWordSchema(Schema):
 
 
 class UserInputMatchSchema(Schema):
-    email = fields.Email(required=True)
+    id = fields.Integer(required=True)
 
 
 class UserMatchesSchema(Schema):

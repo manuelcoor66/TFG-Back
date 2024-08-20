@@ -33,6 +33,10 @@ class AddNewPlayerSchema(Schema):
 class AddResultSchema(Schema):
     match_id = fields.Integer(required=True)
     result = fields.Str(required=False)
+    win_player_1 = fields.Str(required=True)
+    win_player_2 = fields.Str(required=True)
+    win_player_3 = fields.Str(required=False)
+    win_player_4 = fields.Str(required=False)
 
 
 class MatchAddResponse(Schema):
