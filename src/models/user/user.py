@@ -4,9 +4,10 @@ from .user_exception import UserEmailException, UserIdException, UserExistsExcep
 
 from src.models import db
 
+
 # Definir la clase User
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     last_names = db.Column(db.String(50))
@@ -29,10 +30,10 @@ class User(db.Model):
         """
         String representation of a user
         """
-        return f'<User {self.name} ({self.email})>'
+        return f"<User {self.name} ({self.email})>"
 
     @classmethod
-    def get_user_by_email(cls, user_email: email) -> 'User':
+    def get_user_by_email(cls, user_email: email) -> "User":
         """
         Get an existing user
         :param user_email:
@@ -46,7 +47,7 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
-    def get_user_by_id(cls, user_id: int) -> 'User':
+    def get_user_by_id(cls, user_id: int) -> "User":
         """
         Get an existing user
         :param user_id:
@@ -60,7 +61,23 @@ class User(db.Model):
             raise UserIdException()
 
     @classmethod
-    def create_user(cls, name: str, last_names: str, email: str, password: str, security_word: str) -> 'User':
+    def get_user_name(cls, user_id: int) -> str:
+        """
+        Get an existing user with his names
+        :param user_id:
+        :return:
+        """
+        user = db.session.query(User).filter_by(id=user_id).first()
+
+        if user:
+            return user.name + " " + user.last_names
+        else:
+            raise UserIdException()
+
+    @classmethod
+    def create_user(
+        cls, name: str, last_names: str, email: str, password: str, security_word: str
+    ) -> "User":
         """
         Create a new user
         :param name:
@@ -73,7 +90,6 @@ class User(db.Model):
         user = db.session.query(User).filter_by(email=email).first()
 
         if user is None:
-            # Crear un nuevo objeto de usuario
             new_user = User(
                 name=name,
                 last_names=last_names,
@@ -81,12 +97,10 @@ class User(db.Model):
                 password=password,
                 security_word=security_word,
                 matches=0,
-                wins=0
+                wins=0,
             )
             try:
-                # Agregar el nuevo usuario a la sesión
                 db.session.add(new_user)
-                # Confirmar los cambios en la base de datos
                 db.session.commit()
             except Exception as e:
                 db.session.rollback()
@@ -98,8 +112,9 @@ class User(db.Model):
             raise UserExistsException()
 
     @classmethod
-    def modify_user(cls, name: str, last_names: str, email: str, password: str,
-                    security_word: str) -> 'User':
+    def modify_user(
+        cls, name: str, last_names: str, email: str, password: str, security_word: str
+    ) -> "User":
         """
         Modify an existing user
         :param security_word:
@@ -148,7 +163,6 @@ class User(db.Model):
         else:
             raise UserIdException()
 
-
     @classmethod
     def delete_user_by_email(cls, user_email: email):
         """
@@ -176,12 +190,12 @@ class User(db.Model):
             serialized_users = []
             for user in users:
                 serialized_user = {
-                    'id': user.id,
-                    'name': user.name,
-                    'last_names': user.last_names,
-                    'email': user.email,
-                    'password': user.password,
-                    'security_word': user.security_word
+                    "id": user.id,
+                    "name": user.name,
+                    "last_names": user.last_names,
+                    "email": user.email,
+                    "password": user.password,
+                    "security_word": user.security_word,
                 }
                 serialized_users.append(serialized_user)
 
@@ -204,7 +218,6 @@ class User(db.Model):
 
     @classmethod
     def change_user_security_word(cls, email: str, security_word: str):
-        print(security_word)
         try:
             user = cls.get_user_by_email(email)
             user.security_word = security_word
@@ -217,15 +230,15 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
-    def add_new_win(cls, email: str):
-        user = cls.get_user_by_email(email)
+    def add_new_win(cls, id: int):
+        user = cls.get_user_by_id(id)
         if user:
             user.matches += 1
             user.wins += 1
 
             try:
                 db.session.commit()
-                return {'matches': user.matches, 'wins': user.wins}
+                return {"matches": user.matches, "wins": user.wins}
             except Exception as e:
                 db.session.rollback()
                 raise e
@@ -233,15 +246,15 @@ class User(db.Model):
             raise UserEmailException()
 
     @classmethod
-    def add_new_match(cls, email: str):
-        user = cls.get_user_by_email(email)
+    def add_new_match(cls, id: int):
+        user = cls.get_user_by_id(id)
 
         if user:
             user.matches += 1
 
             try:
                 db.session.commit()
-                return {'matches': user.matches}
+                return {"matches": user.matches}
             except Exception as e:
                 db.session.rollback()
                 raise e

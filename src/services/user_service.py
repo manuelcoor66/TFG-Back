@@ -12,18 +12,18 @@ from src.models.user import (
     UserInputMatchSchema,
     UserMatchesSchema,
     UserWinsSchema,
-    UserInputSecurityWordSchema
+    UserInputSecurityWordSchema,
 )
 
 from src.models.user.user_exception import (
     UserEmailException,
     UserExistsException,
-    UserIdException
+    UserIdException,
 )
 
-api_url = '/user'
-api_name = 'User'
-api_description = 'User service'
+api_url = "/user"
+api_name = "User"
+api_description = "User service"
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -35,9 +35,9 @@ blp = Blueprint(
 )
 
 
-@blp.route('/create-user', methods=['POST'])
+@blp.route("/create-user", methods=["POST"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(CreateUserInputSchema, location='query')
+@blp.arguments(CreateUserInputSchema, location="query")
 @blp.response(200, UserInputSchema)
 def create_user(data):
     """
@@ -45,22 +45,22 @@ def create_user(data):
     """
     try:
         new_user = User.create_user(
-            data.get('name'),
-            data.get('last_names'),
-            data.get('email'),
-            data.get('password'),
-            data.get('security_word')
+            data.get("name"),
+            data.get("last_names"),
+            data.get("email"),
+            data.get("password"),
+            data.get("security_word"),
         )
         return new_user
     except UserExistsException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/modify-user', methods=['PATCH'])
+@blp.route("/modify-user", methods=["PATCH"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(ModifyUserInputSchema, location='query')
+@blp.arguments(ModifyUserInputSchema, location="query")
 @blp.response(200, UserInputSchema)
 def modify_user(data):
     """
@@ -68,20 +68,20 @@ def modify_user(data):
     """
     try:
         new_user = User.modify_user(
-            data.get('name'),
-            data.get('last_names'),
-            data.get('email'),
-            data.get('password'),
-            data.get('security_word')
+            data.get("name"),
+            data.get("last_names"),
+            data.get("email"),
+            data.get("password"),
+            data.get("security_word"),
         )
         return new_user
     except (UserEmailException, Exception) as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/<int:user_id>', methods=['GET'])
+@blp.route("/id/<int:user_id>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, UserInputSchema)
 def get_user_by_id(user_id: int):
@@ -89,15 +89,15 @@ def get_user_by_id(user_id: int):
     Get a user by his id
     """
     try:
-        new_user = User.get_user_by_id(user_id)
-        return new_user
+        user = User.get_user_by_id(user_id)
+        return user
     except UserIdException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/email/<string:user_email>', methods=['GET'])
+@blp.route("/email/<string:user_email>", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, UserInputSchema)
 def get_user_by_email(user_email: str):
@@ -108,12 +108,12 @@ def get_user_by_email(user_email: str):
         new_user = User.get_user_by_email(user_email)
         return new_user
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/<int:user_id>', methods=['DELETE'])
+@blp.route("/<int:user_id>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_user_by_id(user_id: int):
@@ -123,12 +123,12 @@ def delete_user_by_id(user_id: int):
     try:
         User.delete_user_by_id(user_id)
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/<string:user_email>', methods=['DELETE'])
+@blp.route("/<string:user_email>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_user_by_email(user_email: str):
@@ -138,12 +138,12 @@ def delete_user_by_email(user_email: str):
     try:
         User.delete_user_by_email(user_email)
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/user_list', methods=['GET'])
+@blp.route("/user_list", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200, UserListSchema)
 def get_all_users():
@@ -153,71 +153,72 @@ def get_all_users():
     try:
         users = User.get_all_users()
 
-        return {'items': users, 'total': len(users)}
+        return {"items": users, "total": len(users)}
     except Exception as e:
-        return {'message': str(e)}
+        return {"message": str(e)}
 
 
-@blp.route('/change-password', methods=['PATCH'])
+@blp.route("/change-password", methods=["PATCH"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputPasswordSchema, location='query')
+@blp.arguments(UserInputPasswordSchema, location="query")
 @blp.response(200)
 def change_user_password(data):
     """
     Change an user password
     """
     try:
-        return User.change_user_password(data.get('email'), data.get('new_password'))
+        return User.change_user_password(data.get("email"), data.get("new_password"))
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/change-security-word', methods=['PATCH'])
+@blp.route("/change-security-word", methods=["PATCH"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputSecurityWordSchema, location='query')
+@blp.arguments(UserInputSecurityWordSchema, location="query")
 @blp.response(200)
 def change_user_security_word(data):
     """
     Change an user security word
     """
     try:
-        return User.change_user_security_word(data.get('email'), data.get('security_word'))
+        return User.change_user_security_word(
+            data.get("email"), data.get("security_word")
+        )
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/win', methods=['PUT'])
+@blp.route("/win", methods=["PUT"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputMatchSchema, location='query')
+@blp.arguments(UserInputMatchSchema, location="query")
 @blp.response(200, UserWinsSchema)
 def add_new_win(data):
     """
     Add a new win to the user
     """
     try:
-        return User.add_new_win(data.get('email'))
+        return User.add_new_win(data.get("id"))
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
 
 
-@blp.route('/match', methods=['PUT'])
+@blp.route("/match", methods=["PUT"])
 # @blp.doc(security=[{'JWT': []}])
-@blp.arguments(UserInputMatchSchema, location='query')
+@blp.arguments(UserInputMatchSchema, location="query")
 @blp.response(200, UserMatchesSchema)
 def add_new_match(data):
     """
     Add a new match to the user
     """
     try:
-        return User.add_new_match(data.get('email'))
+        return User.add_new_match(data.get("id"))
     except UserEmailException as e:
-        response = jsonify({'message': str(e)})
+        response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
-

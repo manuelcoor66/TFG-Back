@@ -11,16 +11,17 @@ from .user_schema import (
     UserWinsSchema,
     UserInputSecurityWordSchema,
 )
+
 __all__ = [
-    'db',
-    'User',
-    'CreateUserInputSchema',
-    'UserInputSchema',
-    'UserListSchema',
-    'UserInputPasswordSchema',
-    'ModifyUserInputSchema',
-    'UserInputMatchSchema',
-    'UserMatchesSchema',
-    'UserWinsSchema',
-    'UserInputSecurityWordSchema'
+    "db",
+    "User",
+    "CreateUserInputSchema",
+    "UserInputSchema",
+    "UserListSchema",
+    "UserInputPasswordSchema",
+    "ModifyUserInputSchema",
+    "UserInputMatchSchema",
+    "UserMatchesSchema",
+    "UserWinsSchema",
+    "UserInputSecurityWordSchema",
 ]
