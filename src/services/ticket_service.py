@@ -94,7 +94,6 @@ def create_ticket(data):
             data.get("state"),
             data.get("date"),
         )
-        print(new_ticket)
 
         return new_ticket
     except Exception as e:

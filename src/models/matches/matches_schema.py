@@ -6,10 +6,10 @@ class MatchResponse(Schema):
     league_id = fields.Integer(required=True)
     result = fields.Str(required=True)
     player_name_1 = fields.Str(required=True)
-    player_name_2 = fields.Str(required=True)
+    player_name_2 = fields.Str(required=False)
     player_name_3 = fields.Str(required=False)
     player_name_4 = fields.Str(required=False)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
     place = fields.Integer(required=True)
 
 
@@ -21,7 +21,7 @@ class MatchesListSchema(Schema):
 class CreateMatchSchema(Schema):
     league_id = fields.Integer(required=True)
     player_name_1 = fields.Integer(required=False)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
     place = fields.Integer(required=True)
 
 
@@ -47,5 +47,5 @@ class MatchAddResponse(Schema):
     player_id_2 = fields.Str(required=False)
     player_id_3 = fields.Str(required=False)
     player_id_4 = fields.Str(required=False)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
     place = fields.Integer(required=True)

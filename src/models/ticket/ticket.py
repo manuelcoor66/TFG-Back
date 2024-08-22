@@ -128,8 +128,7 @@ class Ticket(db.Model):
         if tickets:
             serialized_tickets = []
             for ticket in tickets:
-                print(ticket)
-                league = league = db.session.query(League).filter_by(id=ticket.league_id).first()
+                league = db.session.query(League).filter_by(id=ticket.league_id).first()
 
                 serialized_ticket = {
                     "id": league.id,

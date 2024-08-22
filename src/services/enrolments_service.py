@@ -181,7 +181,7 @@ def get_enrolment_table_by_league_id(league_id: int):
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(AddEnrolmentResultSchema, location="query")
 @blp.response(200)
-def get_enrolment_table_by_league_id(data):
+def add_enrolment_result(data):
     """
     Add an enrolment result
     """

@@ -13,7 +13,7 @@ class LeagueResponse(Schema):
     place = fields.Str(required=True)
     weeks = fields.Int(required=True)
     weeks_played = fields.Int(required=True)
-    date_start = fields.Date(required=True)
+    date_start = fields.DateTime(required=True)
     sport = fields.String(required=True)
     sport_icon = fields.String(required=True)
     price = fields.Int(required=True)
@@ -32,7 +32,7 @@ class CreateLeagueSchema(Schema):
     place = fields.Int(required=True)
     points_defeat = fields.Int(required=True)
     weeks = fields.Int(required=True)
-    date_start = fields.Date(required=True)
+    date_start = fields.DateTime(required=True)
     sport_id = fields.Integer(required=True)
     price = fields.Int(required=True)
 
@@ -44,7 +44,7 @@ class ModifyLeagueResponse(Schema):
     points_victory = fields.Int(required=True)
     points_defeat = fields.Int(required=True)
     weeks = fields.Int(required=True)
-    date_start = fields.Date(required=True)
+    date_start = fields.DateTime(required=True)
 
 
 class LeagueIdSchema(Schema):

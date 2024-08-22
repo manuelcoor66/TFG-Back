@@ -333,7 +333,6 @@ class Enrolment(db.Model):
 
             try:
                 db.session.commit()
-                print(enrolments)
             except Exception as e:
                 db.session.rollback()
                 raise e

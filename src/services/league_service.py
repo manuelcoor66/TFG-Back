@@ -40,7 +40,6 @@ def get_league_by_id(league_id: int):
     try:
         league = League.get_league_by_id(league_id)
 
-        print(league)
         return league
     except LeagueIdException as e:
         response = jsonify({"message": str(e)})

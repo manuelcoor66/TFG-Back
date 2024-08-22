@@ -8,14 +8,14 @@ class TicketInputScheme(Schema):
     league_id = fields.Integer(required=True)
     user_id = fields.Integer(required=True)
     state = fields.Enum(TicketState, required=True)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
 
 
 class CreateTicketScheme(Schema):
     league_id = fields.Integer(required=True)
     user_id = fields.Integer(required=True)
     state = fields.Enum(TicketState, required=True)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
 
 
 class TicketUserScheme(Schema):
@@ -23,7 +23,7 @@ class TicketUserScheme(Schema):
     league_name = fields.String(required=True)
     user_name = fields.String(required=True)
     state = fields.Enum(TicketState, required=True)
-    date = fields.Date(required=True)
+    date = fields.DateTime(required=True)
 
 
 class TicketUserListSchema(Schema):

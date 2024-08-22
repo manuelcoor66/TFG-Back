@@ -261,12 +261,21 @@ class Matches(db.Model):
                     "player_name_1": User.get_user_by_id(match.player_id_1).name
                     + " "
                     + User.get_user_by_id(match.player_id_1).last_names,
-                    "player_name_2": User.get_user_by_id(match.player_id_2).name
-                    + " "
-                    + User.get_user_by_id(match.player_id_2).last_names,
+                    # "player_name_2": User.get_user_by_id(match.player_id_2).name
+                    # + " "
+                    # + User.get_user_by_id(match.player_id_2).last_names,
                     "date": match.date,
                     "place": match.place,
                 }
+
+                print(matches)
+
+                if match.player_id_2 != 0:
+                    serialized_match["player_name_2"] = (
+                        User.get_user_by_id(match.player_id_2).name
+                        + " "
+                        + User.get_user_by_id(match.player_id_2).last_names
+                    )
 
                 if match.player_id_3 != 0:
                     serialized_match["player_name_3"] = (
@@ -300,7 +309,7 @@ class Matches(db.Model):
                     Matches.player_id_3 == player_id_1,
                     Matches.player_id_4 == player_id_1,
                 ),
-                Matches.date > datetime.datetime.now(),
+                Matches.date > datetime.datetime.now()
             )
             .all()
         )
@@ -315,6 +324,7 @@ class Matches(db.Model):
                 date=date,
                 place=place,
             )
+
             try:
                 db.session.add(new_match)
                 db.session.commit()

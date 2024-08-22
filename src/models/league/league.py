@@ -313,7 +313,6 @@ class League(db.Model):
 
         try:
             league.enrolments = league.enrolments + 1
-            print(league.created_by)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
