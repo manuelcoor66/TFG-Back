@@ -295,7 +295,7 @@ class Matches(db.Model):
 
             return serialized_matches
         else:
-            raise Exception("No existen partidos.")
+            return {}
 
     @classmethod
     def create_league(cls, league_id: int, player_id_1: int, date: Date, place: int):
