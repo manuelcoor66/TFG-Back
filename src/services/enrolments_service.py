@@ -20,6 +20,7 @@ from src.models.enrolments.enrolments_exceptions import (
     EnrolmentException,
 )
 from src.models.league.league_exceptions import LeagueIdException
+from src.models.user.user_exception import UserIdException
 
 api_url = "/enrolments"
 api_name = "Enrolments"
@@ -189,7 +190,7 @@ def add_enrolment_result(data):
         enrolment = Enrolment.add_result(data.get("user_id"), data.get("league_id"), data.get("win"))
 
         return enrolment
-    except EnrolmentLeagueIdException as e:
+    except (EnrolmentLeagueIdException, UserIdException) as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
         return response

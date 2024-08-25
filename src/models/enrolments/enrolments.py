@@ -262,7 +262,7 @@ class Enrolment(db.Model):
 
                 serialized_enrolment = {
                     "id": id,
-                    "name": user.name,
+                    "name": user.name + ' ' + user.last_names,
                     "points": enrolment.points,
                     "wins": enrolment.wins,
                     "defeats": enrolment.defeats,

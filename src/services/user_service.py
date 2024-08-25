@@ -13,6 +13,9 @@ from src.models.user import (
     UserMatchesSchema,
     UserWinsSchema,
     UserInputSecurityWordSchema,
+    ChangeUserRoleSchema,
+    UserStateSchema,
+    ManageUsersTableListSchema,
 )
 
 from src.models.user.user_exception import (
@@ -218,7 +221,72 @@ def add_new_match(data):
     """
     try:
         return User.add_new_match(data.get("id"))
-    except UserEmailException as e:
+    except UserIdException as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/change-state/<int:user_id>", methods=["PATCH"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.response(200, UserInputSchema)
+def change_state(user_id: int):
+    """
+    Changes an user state
+    """
+    try:
+        user = User.change_state(user_id)
+
+        return user
+    except (UserIdException, Exception) as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/change-role", methods=["PATCH"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(ChangeUserRoleSchema, location="query")
+@blp.response(200, UserInputSchema)
+def change_role(data):
+    """
+    Changes an user role
+    """
+    try:
+        user = User.change_role(data.get("id"), data.get("role"))
+
+        return user
+    except (UserIdException, Exception) as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/state-users/", methods=["GET"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(UserStateSchema, location="query")
+@blp.response(200, )
+def get_users_by_state(date):
+    """
+    Gets all users by state
+    """
+    users = User.get_users_by_state(date.get('state'))
+
+    return {"items": users, "total": len(users)}
+
+
+@blp.route("/table", methods=["GET"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.response(200, ManageUsersTableListSchema)
+def get_users_table():
+    """
+    Get all the users to show on a table
+    """
+    try:
+        users = User.get_table_users()
+
+        return {"items": users, "total": len(users)}
+    except (UserIdException, Exception) as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
         return response
