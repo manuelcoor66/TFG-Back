@@ -10,6 +10,10 @@ from .user_schema import (
     UserMatchesSchema,
     UserWinsSchema,
     UserInputSecurityWordSchema,
+    ChangeUserRoleSchema,
+    UserStateSchema,
+    ManageUsersTableSchema,
+    ManageUsersTableListSchema
 )
 
 __all__ = [
@@ -24,4 +28,8 @@ __all__ = [
     "UserMatchesSchema",
     "UserWinsSchema",
     "UserInputSecurityWordSchema",
+    "ChangeUserRoleSchema",
+    "UserStateSchema",
+    "ManageUsersTableSchema",
+    "ManageUsersTableListSchema"
 ]
