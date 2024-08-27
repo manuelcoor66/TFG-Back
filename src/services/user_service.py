@@ -22,6 +22,7 @@ from src.models.user.user_exception import (
     UserEmailException,
     UserExistsException,
     UserIdException,
+    NoUserAdminException,
 )
 
 api_url = "/user"
@@ -259,6 +260,10 @@ def change_role(data):
     except (UserIdException, Exception) as e:
         response = jsonify({"message": str(e)})
         response.status_code = 422
+        return response
+    except NoUserAdminException as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 404
         return response
 
 

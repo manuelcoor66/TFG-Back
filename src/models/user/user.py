@@ -2,7 +2,7 @@ from typing import Any
 
 from sqlalchemy import Enum
 
-from .user_exception import UserEmailException, UserIdException, UserExistsException
+from .user_exception import UserEmailException, UserIdException, UserExistsException, NoUserAdminException
 
 from src.models import db
 from src.utils.userEnum import UserState, UserRole
@@ -298,7 +298,13 @@ class User(db.Model):
         user = cls.get_user_by_id(id)
 
         if user:
-            user.role = role
+            if user.role == UserRole.ADMIN and role != UserRole.ADMIN:
+                admin_users = db.session.query(User).filter_by(role=UserRole.ADMIN.name).all()
+
+                if len(admin_users) != 1:
+                    user.role = role
+                else:
+                    raise NoUserAdminException()
 
             try:
                 db.session.commit()
