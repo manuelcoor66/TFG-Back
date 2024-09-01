@@ -49,3 +49,7 @@ class ModifyLeagueResponse(Schema):
 
 class LeagueIdSchema(Schema):
     id = fields.Integer(required=True)
+
+
+class LeagueSearchSchema(Schema):
+    search = fields.Str(required=False)

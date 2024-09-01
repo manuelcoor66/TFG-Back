@@ -306,10 +306,10 @@ def get_users_table():
 @blp.response(200, ManageUsersTableListSchema)
 def get_search_users_table(data):
     """
-    Get all the users to show on a table
+    Get all the users searched to show on a table
     """
     try:
-        users = User.get_search_table_users(data.get("tem"))
+        users = User.get_search_table_users(data.get("search"))
 
         return {"items": users, "total": len(users)}
     except (UserIdException, Exception) as e:
