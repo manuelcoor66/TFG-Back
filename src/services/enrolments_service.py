@@ -152,7 +152,9 @@ def finalize_enrolment(data):
     Finalize an enrolment
     """
     try:
-        enrolments = Enrolment.finalize_enrolment(data.get("user_id"), data.get("league_id"))
+        enrolments = Enrolment.finalize_enrolment(
+            data.get("user_id"), data.get("league_id")
+        )
 
         return {"items": enrolments, "total": len(enrolments)}
     except EnrolmentException as e:
@@ -187,7 +189,9 @@ def add_enrolment_result(data):
     Add an enrolment result
     """
     try:
-        enrolment = Enrolment.add_result(data.get("user_id"), data.get("league_id"), data.get("win"))
+        enrolment = Enrolment.add_result(
+            data.get("user_id"), data.get("league_id"), data.get("win")
+        )
 
         return enrolment
     except (EnrolmentLeagueIdException, UserIdException) as e:

@@ -262,7 +262,7 @@ class Enrolment(db.Model):
 
                 serialized_enrolment = {
                     "id": id,
-                    "name": user.name + ' ' + user.last_names,
+                    "name": user.name + " " + user.last_names,
                     "points": enrolment.points,
                     "wins": enrolment.wins,
                     "defeats": enrolment.defeats,
@@ -316,7 +316,11 @@ class Enrolment(db.Model):
 
     @classmethod
     def add_result(cls, user_id, league_id, win: bool):
-        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id, user_id=user_id).all()
+        enrolments = (
+            db.session.query(Enrolment)
+            .filter_by(league_id=league_id, user_id=user_id)
+            .all()
+        )
 
         if enrolments:
             for enrolment in enrolments:
@@ -338,5 +342,3 @@ class Enrolment(db.Model):
                 raise e
         else:
             raise EnrolmentLeagueIdException
-
-

@@ -13,12 +13,16 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ENUM
 from enum import Enum
 
+
 class TicketState(Enum):
     OPEN = "open"
     CLOSED = "closed"
     PENDING = "pending"
 
-ticket_state_enum = ENUM("open", "closed", "pending", name="ticketstate", create_type=False)
+
+ticket_state_enum = ENUM(
+    "open", "closed", "pending", name="ticketstate", create_type=False
+)
 
 # revision identifiers, used by Alembic.
 revision: str = "86ca2118fd4a"

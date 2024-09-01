@@ -309,7 +309,7 @@ class Matches(db.Model):
                     Matches.player_id_3 == player_id_1,
                     Matches.player_id_4 == player_id_1,
                 ),
-                Matches.date > datetime.datetime.now()
+                Matches.date > datetime.datetime.now(),
             )
             .all()
         )
@@ -381,7 +381,15 @@ class Matches(db.Model):
             raise Exception("No existen partidos.")
 
     @classmethod
-    def add_result(cls, match_id: int, result: str, win_player_1: bool, win_player_2: bool, win_player_3: bool, win_player_4: bool):
+    def add_result(
+        cls,
+        match_id: int,
+        result: str,
+        win_player_1: bool,
+        win_player_2: bool,
+        win_player_3: bool,
+        win_player_4: bool,
+    ):
         match = (
             db.session.query(Matches)
             .filter(
@@ -402,7 +410,7 @@ class Matches(db.Model):
 
             Enrolment.add_result(Matches.player_id_1, match.league_id, win_player_1)
             Enrolment.add_result(Matches.player_id_2, match.league_id, win_player_2)
-            if win_player_3 != 'null' and win_player_4 != 'null':
+            if win_player_3 != "null" and win_player_4 != "null":
                 Enrolment.add_result(Matches.player_id_3, match.league_id, win_player_3)
                 Enrolment.add_result(Matches.player_id_4, match.league_id, win_player_4)
 

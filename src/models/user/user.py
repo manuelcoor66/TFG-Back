@@ -1,8 +1,13 @@
 from typing import Any
 
-from sqlalchemy import Enum
+from sqlalchemy import Enum, or_
 
-from .user_exception import UserEmailException, UserIdException, UserExistsException, NoUserAdminException
+from .user_exception import (
+    UserEmailException,
+    UserIdException,
+    UserExistsException,
+    NoUserAdminException,
+)
 
 from src.models import db
 from src.utils.userEnum import UserState, UserRole
@@ -22,9 +27,18 @@ class User(db.Model):
     state = db.Column(Enum(UserState), nullable=False)
     role = db.Column(Enum(UserRole), nullable=False)
 
-    def __init__(self, name: str, last_names: str, email: str, password: str,
-                 security_word: str, matches: int, wins: int,
-                 state: UserState, role: UserRole) -> None:
+    def __init__(
+        self,
+        name: str,
+        last_names: str,
+        email: str,
+        password: str,
+        security_word: str,
+        matches: int,
+        wins: int,
+        state: UserState,
+        role: UserRole,
+    ) -> None:
         self.name = name
         self.last_names = last_names
         self.email = email
@@ -107,7 +121,7 @@ class User(db.Model):
                 matches=0,
                 wins=0,
                 state=UserState.AVAILABLE,
-                role=UserRole.USER
+                role=UserRole.USER,
             )
             try:
                 db.session.add(new_user)
@@ -207,7 +221,7 @@ class User(db.Model):
                     "password": user.password,
                     "security_word": user.security_word,
                     "state": user.state,
-                    "roles": user.role
+                    "roles": user.role,
                 }
                 serialized_users.append(serialized_user)
 
@@ -274,7 +288,7 @@ class User(db.Model):
             raise UserIdException()
 
     @classmethod
-    def change_state(cls, id: int) -> 'User':
+    def change_state(cls, id: int) -> "User":
         user = cls.get_user_by_id(id)
 
         if user:
@@ -294,12 +308,14 @@ class User(db.Model):
             raise UserIdException()
 
     @classmethod
-    def change_role(cls, id: int, role: UserRole) -> 'User':
+    def change_role(cls, id: int, role: UserRole) -> "User":
         user = cls.get_user_by_id(id)
 
         if user:
             if user.role == UserRole.ADMIN and role != UserRole.ADMIN:
-                admin_users = db.session.query(User).filter_by(role=UserRole.ADMIN.name).all()
+                admin_users = (
+                    db.session.query(User).filter_by(role=UserRole.ADMIN.name).all()
+                )
 
                 if len(admin_users) != 1:
                     user.role = role
@@ -341,10 +357,40 @@ class User(db.Model):
             serialized_users = []
             for user in users:
                 serialized_user = {
-                    "name": user.name + ' ' + user.last_names,
+                    "name": user.name + " " + user.last_names,
                     "email": user.email,
                     "state": user.state,
-                    "role": user.role
+                    "role": user.role,
+                }
+                serialized_users.append(serialized_user)
+
+            return serialized_users
+        else:
+            raise Exception("No existen usuarios.")
+
+    @classmethod
+    def get_search_table_users(cls, search=None) -> list[dict[str, Any]]:
+        query = db.session.query(User)
+
+        if search:
+            search_pattern = f"%{search}%"
+            query = query.filter(
+                or_(
+                    User.name.ilike(search_pattern),
+                    User.last_names.ilike(search_pattern),
+                )
+            )
+
+        users = query.all()
+
+        if users:
+            serialized_users = []
+            for user in users:
+                serialized_user = {
+                    "name": user.name + " " + user.last_names,
+                    "email": user.email,
+                    "state": user.state,
+                    "role": user.role,
                 }
                 serialized_users.append(serialized_user)
 

@@ -42,7 +42,7 @@ class League(db.Model):
         weeks,
         weeks_played,
         date_start,
-        price
+        price,
     ):
         self.name = name
         self.description = description
@@ -91,7 +91,7 @@ class League(db.Model):
                 "place": place.name,
                 "sport": sport.name,
                 "sport_icon": sport.icon,
-                "price": league.price
+                "price": league.price,
             }
 
             return serialized_league
@@ -145,7 +145,7 @@ class League(db.Model):
                     "place": place.name,
                     "sport": sport.name,
                     "sport_icon": sport.icon,
-                    "price": league.price
+                    "price": league.price,
                 }
 
                 serialized_leagues.append(serialized_league)
@@ -166,7 +166,7 @@ class League(db.Model):
         weeks: int,
         date_start: date,
         sport_id: int,
-        price: int
+        price: int,
     ) -> "League":
         """
         Create a new league
