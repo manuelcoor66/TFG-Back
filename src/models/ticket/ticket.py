@@ -1,6 +1,7 @@
 from typing import Any
 
 from sqlalchemy import Date, Enum, func
+from sqlalchemy.orm import aliased
 
 from src.models import db
 from src.models.league import League
@@ -106,21 +107,29 @@ class Ticket(db.Model):
             db.session.query(
                 Ticket.user_id,
                 Ticket.league_id,
-                func.max(Ticket.date).label("max_date"),
+                Ticket.date,
+                Ticket.id,
+                func.row_number().over(
+                    partition_by=(Ticket.user_id, Ticket.league_id),
+                    order_by=Ticket.date.desc()
+                ).label('row_number')
             )
             .filter_by(user_id=user_id)
-            .group_by(Ticket.user_id, Ticket.league_id)
             .subquery()
         )
+
+        ticket_alias = aliased(subquery)
 
         tickets = (
             db.session.query(Ticket)
             .join(
-                subquery,
-                (Ticket.user_id == subquery.c.user_id)
-                & (Ticket.league_id == subquery.c.league_id)
-                & (Ticket.date == subquery.c.max_date),
+                ticket_alias,
+                (Ticket.user_id == ticket_alias.c.user_id)
+                & (Ticket.league_id == ticket_alias.c.league_id)
+                & (Ticket.date == ticket_alias.c.date)
+                & (Ticket.id == ticket_alias.c.id)
             )
+            .filter(ticket_alias.c.row_number == 1)
             .all()
         )
 

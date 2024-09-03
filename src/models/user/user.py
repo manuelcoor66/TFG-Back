@@ -321,6 +321,8 @@ class User(db.Model):
                     user.role = role
                 else:
                     raise NoUserAdminException()
+            else:
+                user.role = role
 
             try:
                 db.session.commit()

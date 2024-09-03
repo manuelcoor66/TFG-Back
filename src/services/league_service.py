@@ -56,6 +56,7 @@ def get_league_by_name(league_name: str):
     Get a league by his name
     """
     try:
+        print(league_name)
         league = League.get_league_by_name(league_name)
 
         return league
@@ -143,7 +144,7 @@ def delete_league_by_id(league_id: int):
         return response
 
 
-@blp.route("/name/<string:league_name>", methods=["DELETE"])
+@blp.route("/delete/<string:league_name>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_league_by_name(league_name: str):

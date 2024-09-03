@@ -178,9 +178,11 @@ class Enrolment(db.Model):
         league = db.session.query(League).filter_by(id=league_id).first()
 
         try:
-            league.enrolments += 1
             db.session.add(new_enrolment)
+            league.enrolments += 1
             db.session.commit()
+
+            l = db.session.query(League).filter_by(id=league_id).first()
 
             return new_enrolment
         except Exception as e:
@@ -315,13 +317,16 @@ class Enrolment(db.Model):
         return users_with_max_points
 
     @classmethod
-    def add_result(cls, user_id, league_id, win: bool):
+    def add_result(cls, user_id: int, league_id: int, win: bool):
         enrolments = (
             db.session.query(Enrolment)
             .filter_by(league_id=league_id, user_id=user_id)
             .all()
         )
 
+        print(user_id)
+        print(league_id)
+        print(enrolments)
         if enrolments:
             for enrolment in enrolments:
                 league = db.session.query(League).filter_by(id=league_id).first()

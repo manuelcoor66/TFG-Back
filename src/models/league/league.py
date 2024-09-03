@@ -108,16 +108,30 @@ class League(db.Model):
         :return: The searched league
         """
         league = db.session.query(League).filter_by(name=league_name).first()
+        user = User.get_user_by_id(league.created_by)
+        place = Places.get_place_by_id(league.place_id)
+        sport = Sports.get_sports_by_id(league.sport_id)
 
         if league:
-            user = User.get_user_by_id(league.created_by)
-            place = Places.get_place_by_id(league.place_id)
-            league.created_by_id = league.created_by
-            league.created_by = user.name + " " + user.last_names
-            league.place = place.name
-            league.sport = Sports.get_sports_by_id(league.sport_id).name
+            serialized_league = {
+                "id": league.id,
+                "name": league.name,
+                "description": league.description,
+                "created_by": user.name + " " + user.last_names,
+                "created_by_id": league.created_by,
+                "enrolments": league.enrolments,
+                "points_victory": league.points_victory,
+                "points_defeat": league.points_defeat,
+                "weeks": league.weeks,
+                "weeks_played": league.weeks_played,
+                "date_start": league.date_start,
+                "place": place.name,
+                "sport": sport.name,
+                "sport_icon": sport.icon,
+                "price": league.price,
+            }
 
-            return league
+            return serialized_league
         else:
             raise LeagueNameException
 
