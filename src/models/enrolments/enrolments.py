@@ -324,9 +324,6 @@ class Enrolment(db.Model):
             .all()
         )
 
-        print(user_id)
-        print(league_id)
-        print(enrolments)
         if enrolments:
             for enrolment in enrolments:
                 league = db.session.query(League).filter_by(id=league_id).first()

@@ -309,7 +309,7 @@ class Matches(db.Model):
         matches = (
             db.session.query(Matches)
             .filter(
-                league_id == league_id,
+                Matches.league_id == league_id,
                 or_(
                     Matches.player_id_1 == player_id_1,
                     Matches.player_id_2 == player_id_1,
