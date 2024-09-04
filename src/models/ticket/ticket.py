@@ -109,10 +109,12 @@ class Ticket(db.Model):
                 Ticket.league_id,
                 Ticket.date,
                 Ticket.id,
-                func.row_number().over(
+                func.row_number()
+                .over(
                     partition_by=(Ticket.user_id, Ticket.league_id),
-                    order_by=Ticket.date.desc()
-                ).label('row_number')
+                    order_by=Ticket.date.desc(),
+                )
+                .label("row_number"),
             )
             .filter_by(user_id=user_id)
             .subquery()
@@ -127,7 +129,7 @@ class Ticket(db.Model):
                 (Ticket.user_id == ticket_alias.c.user_id)
                 & (Ticket.league_id == ticket_alias.c.league_id)
                 & (Ticket.date == ticket_alias.c.date)
-                & (Ticket.id == ticket_alias.c.id)
+                & (Ticket.id == ticket_alias.c.id),
             )
             .filter(ticket_alias.c.row_number == 1)
             .all()

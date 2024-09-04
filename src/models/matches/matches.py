@@ -228,7 +228,7 @@ class Matches(db.Model):
                 }
 
                 if match.player_id_3 != 0:
-                    players+=1
+                    players += 1
                     serialized_match["player_name_3"] = (
                         User.get_user_by_id(match.player_id_3).name
                         + " "
@@ -236,7 +236,7 @@ class Matches(db.Model):
                     )
 
                 if match.player_id_4 != 0:
-                    players+=1
+                    players += 1
                     serialized_match["player_name_4"] = (
                         User.get_user_by_id(match.player_id_4).name
                         + " "
