@@ -6,6 +6,7 @@ from .league_schema import (
     CreateLeagueSchema,
     ModifyLeagueResponse,
     LeagueIdSchema,
+    LeagueSearchSchema,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "CreateLeagueSchema",
     "ModifyLeagueResponse",
     "LeagueIdSchema",
+    "LeagueSearchSchema",
 ]

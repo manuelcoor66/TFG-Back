@@ -5,7 +5,9 @@ from typing import Any
 
 from src.models import db
 from src.models.enrolments import Enrolment
+from src.models.league import League
 from src.models.matches.matches_exception import UserWithMatch, MatchesLeagueIdException
+from src.models.sports import Sports
 from src.models.user import User
 
 
@@ -204,9 +206,13 @@ class Matches(db.Model):
             .all()
         )
 
+        league = db.session.query(League).filter_by(id=league_id).first()
+        sport = db.session.query(Sports).filter_by(id=league.sport_id).first()
+
         if matches:
             serialized_matches = []
             for match in matches:
+                players = 2
                 serialized_match = {
                     "id": match.id,
                     "league_id": match.league_id,
@@ -222,6 +228,7 @@ class Matches(db.Model):
                 }
 
                 if match.player_id_3 != 0:
+                    players += 1
                     serialized_match["player_name_3"] = (
                         User.get_user_by_id(match.player_id_3).name
                         + " "
@@ -229,13 +236,15 @@ class Matches(db.Model):
                     )
 
                 if match.player_id_4 != 0:
+                    players += 1
                     serialized_match["player_name_4"] = (
                         User.get_user_by_id(match.player_id_4).name
                         + " "
                         + User.get_user_by_id(match.player_id_4).last_names
                     )
 
-                serialized_matches.append(serialized_match)
+                if sport.players is players:
+                    serialized_matches.append(serialized_match)
 
             return serialized_matches
         else:
@@ -267,8 +276,6 @@ class Matches(db.Model):
                     "date": match.date,
                     "place": match.place,
                 }
-
-                print(matches)
 
                 if match.player_id_2 != 0:
                     serialized_match["player_name_2"] = (
@@ -302,14 +309,14 @@ class Matches(db.Model):
         matches = (
             db.session.query(Matches)
             .filter(
-                league_id == league_id,
+                Matches.league_id == league_id,
                 or_(
                     Matches.player_id_1 == player_id_1,
                     Matches.player_id_2 == player_id_1,
                     Matches.player_id_3 == player_id_1,
                     Matches.player_id_4 == player_id_1,
                 ),
-                Matches.date > datetime.datetime.now()
+                Matches.date > datetime.datetime.now(),
             )
             .all()
         )
@@ -381,7 +388,15 @@ class Matches(db.Model):
             raise Exception("No existen partidos.")
 
     @classmethod
-    def add_result(cls, match_id: int, result: str, win_player_1: bool, win_player_2: bool, win_player_3: bool, win_player_4: bool):
+    def add_result(
+        cls,
+        match_id: int,
+        result: str,
+        win_player_1: bool,
+        win_player_2: bool,
+        win_player_3: bool,
+        win_player_4: bool,
+    ):
         match = (
             db.session.query(Matches)
             .filter(
@@ -400,11 +415,11 @@ class Matches(db.Model):
         if match:
             match.result = result
 
-            Enrolment.add_result(Matches.player_id_1, match.league_id, win_player_1)
-            Enrolment.add_result(Matches.player_id_2, match.league_id, win_player_2)
-            if win_player_3 != 'null' and win_player_4 != 'null':
-                Enrolment.add_result(Matches.player_id_3, match.league_id, win_player_3)
-                Enrolment.add_result(Matches.player_id_4, match.league_id, win_player_4)
+            Enrolment.add_result(match.player_id_1, match.league_id, win_player_1)
+            Enrolment.add_result(match.player_id_2, match.league_id, win_player_2)
+            if win_player_3 != "null" and win_player_4 != "null":
+                Enrolment.add_result(match.player_id_3, match.league_id, win_player_3)
+                Enrolment.add_result(match.player_id_4, match.league_id, win_player_4)
 
             try:
                 db.session.commit()

@@ -9,6 +9,7 @@ from src.models.league import (
     CreateLeagueSchema,
     ModifyLeagueResponse,
     LeagueIdSchema,
+    LeagueSearchSchema,
 )
 from src.models.league.league_exceptions import (
     LeagueExistsException,
@@ -55,6 +56,7 @@ def get_league_by_name(league_name: str):
     Get a league by his name
     """
     try:
+        print(league_name)
         league = League.get_league_by_name(league_name)
 
         return league
@@ -76,7 +78,27 @@ def get_all_leagues():
 
         return {"items": leagues, "total": len(leagues)}
     except Exception as e:
-        return {"message": str(e)}
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/search", methods=["GET"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(LeagueSearchSchema, location="query")
+@blp.response(200, LeagueListSchema)
+def get_search_leagues(data):
+    """
+    Get all the leagues searched
+    """
+    try:
+        leagues = League.get_search_leagues(data.get("search"))
+
+        return {"items": leagues, "total": len(leagues)}
+    except Exception as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
 
 
 @blp.route("/create-league", methods=["POST"])
@@ -122,7 +144,7 @@ def delete_league_by_id(league_id: int):
         return response
 
 
-@blp.route("/name/<string:league_name>", methods=["DELETE"])
+@blp.route("/delete/<string:league_name>", methods=["DELETE"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.response(200)
 def delete_league_by_name(league_name: str):

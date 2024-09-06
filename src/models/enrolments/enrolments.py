@@ -178,8 +178,8 @@ class Enrolment(db.Model):
         league = db.session.query(League).filter_by(id=league_id).first()
 
         try:
-            league.enrolments += 1
             db.session.add(new_enrolment)
+            league.enrolments += 1
             db.session.commit()
 
             return new_enrolment
@@ -262,7 +262,7 @@ class Enrolment(db.Model):
 
                 serialized_enrolment = {
                     "id": id,
-                    "name": user.name + ' ' + user.last_names,
+                    "name": user.name + " " + user.last_names,
                     "points": enrolment.points,
                     "wins": enrolment.wins,
                     "defeats": enrolment.defeats,
@@ -315,8 +315,12 @@ class Enrolment(db.Model):
         return users_with_max_points
 
     @classmethod
-    def add_result(cls, user_id, league_id, win: bool):
-        enrolments = db.session.query(Enrolment).filter_by(league_id=league_id, user_id=user_id).all()
+    def add_result(cls, user_id: int, league_id: int, win: bool):
+        enrolments = (
+            db.session.query(Enrolment)
+            .filter_by(league_id=league_id, user_id=user_id)
+            .all()
+        )
 
         if enrolments:
             for enrolment in enrolments:
@@ -338,5 +342,3 @@ class Enrolment(db.Model):
                 raise e
         else:
             raise EnrolmentLeagueIdException
-
-

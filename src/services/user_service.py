@@ -16,6 +16,7 @@ from src.models.user import (
     ChangeUserRoleSchema,
     UserStateSchema,
     ManageUsersTableListSchema,
+    UserSearchSchema,
 )
 
 from src.models.user.user_exception import (
@@ -267,15 +268,17 @@ def change_role(data):
         return response
 
 
-@blp.route("/state-users/", methods=["GET"])
+@blp.route("/state-users", methods=["GET"])
 # @blp.doc(security=[{'JWT': []}])
 @blp.arguments(UserStateSchema, location="query")
-@blp.response(200, )
+@blp.response(
+    200,
+)
 def get_users_by_state(date):
     """
     Gets all users by state
     """
-    users = User.get_users_by_state(date.get('state'))
+    users = User.get_users_by_state(date.get("state"))
 
     return {"items": users, "total": len(users)}
 
@@ -289,6 +292,24 @@ def get_users_table():
     """
     try:
         users = User.get_table_users()
+
+        return {"items": users, "total": len(users)}
+    except (UserIdException, Exception) as e:
+        response = jsonify({"message": str(e)})
+        response.status_code = 422
+        return response
+
+
+@blp.route("/table/search", methods=["GET"])
+# @blp.doc(security=[{'JWT': []}])
+@blp.arguments(UserSearchSchema, location="query")
+@blp.response(200, ManageUsersTableListSchema)
+def get_search_users_table(data):
+    """
+    Get all the users searched to show on a table
+    """
+    try:
+        users = User.get_search_table_users(data.get("search"))
 
         return {"items": users, "total": len(users)}
     except (UserIdException, Exception) as e:

@@ -21,11 +21,7 @@ def upgrade():
     op.create_table("user")
     op.create_table("league")
     op.create_table("enrolments")
-    op.create_table("permission")
-    op.create_table("role")
-    op.create_table("permission_role")
     op.create_table("matches")
-    op.create_table("classification")
     op.create_table("sports")
 
 
@@ -33,9 +29,5 @@ def downgrade():
     op.drop_table("user")
     op.drop_table("league")
     op.drop_table("enrolments")
-    op.drop_table("permission")
-    op.drop_table("role")
-    op.drop_table("permission_role")
     op.drop_table("matches")
-    op.drop_table("classification")
     op.drop_table("sports")

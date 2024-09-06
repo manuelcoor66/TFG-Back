@@ -87,3 +87,7 @@ class ManageUsersTableSchema(Schema):
 class ManageUsersTableListSchema(Schema):
     items = fields.List(fields.Nested(ManageUsersTableSchema))
     total = fields.Int(required=True)
+
+
+class UserSearchSchema(Schema):
+    search = fields.Str(required=False)
