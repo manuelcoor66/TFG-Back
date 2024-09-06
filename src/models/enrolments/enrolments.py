@@ -182,8 +182,6 @@ class Enrolment(db.Model):
             league.enrolments += 1
             db.session.commit()
 
-            l = db.session.query(League).filter_by(id=league_id).first()
-
             return new_enrolment
         except Exception as e:
             db.session.rollback()

@@ -22,27 +22,28 @@ down_revision: Union[str, None] = "8a41d214bb17"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-user_table = table('user',
-    column('name', String),
-    column('last_names', String),
-    column('email', String),
-    column('password', String),
-    column('security_word', String),
-    column('matches', Integer),
-    column('wins', Integer),
-    column('state', Enum(UserState)),
-    column('role', Enum(UserRole))
+user_table = table(
+    "user",
+    column("name", String),
+    column("last_names", String),
+    column("email", String),
+    column("password", String),
+    column("security_word", String),
+    column("matches", Integer),
+    column("wins", Integer),
+    column("state", Enum(UserState)),
+    column("role", Enum(UserRole)),
 )
 
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt(rounds=10)
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed_password.decode('utf-8')
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
+    return hashed_password.decode("utf-8")
 
 
 def upgrade() -> None:
-    hashed_password = hash_password('admin1234!')
+    hashed_password = hash_password("admin1234!")
 
     op.bulk_insert(
         user_table,
